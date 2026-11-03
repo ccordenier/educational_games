@@ -3,21 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Maths Sumo - Dojo Manga</title>
+    <title>Maths Robots - Studio de Multiplication</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Sniglet:wght@800&display=swap');
 
         :root {
-            --dojo-gold: #ffd32a;
-            --dojo-red: #ff3f34;
-            --dojo-blue: #00d2d3;
-            --dojo-dark: #1e272e;
-            --obi-black: #2f3542;
+            --app-gold: #ffd32a;
+            --app-red: #ff3f34;
+            --app-blue: #00d2d3;
+            --app-dark: #1e272e;
+            --bar-bg: #2f3542;
         }
 
         body {
             font-family: 'Sniglet', 'Segoe UI', cursive, sans-serif;
-            background: linear-gradient(135deg, #ff9f43 0%, #ff6b6b 100%);
+            background: linear-gradient(135deg, #3742fa 0%, #2f3542 100%);
             margin: 0;
             padding: 10px;
             display: flex;
@@ -30,9 +30,9 @@
 
         h1 {
             font-family: 'Fredoka One', cursive;
-            color: var(--dojo-gold);
+            color: var(--app-gold);
             margin: 0 0 8px 0;
-            text-shadow: 3px 3px 0px var(--dojo-dark), -2px -2px 0px var(--dojo-dark);
+            text-shadow: 3px 3px 0px var(--app-dark), -2px -2px 0px var(--app-dark);
             font-size: 2rem;
             text-align: center;
             letter-spacing: 2px;
@@ -42,7 +42,7 @@
             width: 100%;
             max-width: 800px;
             background: #fff;
-            border: 5px solid var(--dojo-dark);
+            border: 5px solid var(--app-dark);
             border-radius: 25px;
             box-shadow: 0 12px 0px rgba(0,0,0,0.25);
             padding: 15px;
@@ -58,7 +58,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: var(--dojo-dark);
+            background: var(--app-dark);
             padding: 10px 15px;
             border-radius: 15px;
             color: white;
@@ -69,8 +69,8 @@
         }
 
         .badge {
-            background: var(--dojo-gold);
-            color: var(--dojo-dark);
+            background: var(--app-gold);
+            color: var(--app-dark);
             padding: 4px 10px;
             border-radius: 12px;
             font-family: 'Fredoka One', cursive;
@@ -78,7 +78,7 @@
 
         .action-toggle-btn {
             background: #ffa502;
-            color: var(--dojo-dark);
+            color: var(--app-dark);
             border: 2px solid white;
             padding: 4px 10px;
             border-radius: 10px;
@@ -92,29 +92,29 @@
             transform: scale(0.95);
         }
 
-        .kimono-belt-container {
-            background: var(--obi-black);
-            border: 3px solid var(--dojo-dark);
+        .battery-container {
+            background: var(--bar-bg);
+            border: 3px solid var(--app-dark);
             border-radius: 14px;
             padding: 6px 15px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 5px 0 var(--dojo-dark);
+            box-shadow: 0 5px 0 var(--app-dark);
             transition: all 0.3s ease;
         }
 
-        .kimono-belt-container.ready-l1 {
+        .battery-container.ready-l1 {
             border-color: #2ed573;
-            box-shadow: 0 0 10px #2ed573, 0 5px 0 var(--dojo-dark);
+            box-shadow: 0 0 10px #2ed573, 0 5px 0 var(--app-dark);
         }
 
-        .kimono-belt-container.ready-l2 {
-            border-color: var(--dojo-gold);
-            box-shadow: 0 0 15px var(--dojo-gold), 0 5px 0 var(--dojo-dark);
+        .battery-container.ready-l2 {
+            border-color: var(--app-gold);
+            box-shadow: 0 0 15px var(--app-gold), 0 5px 0 var(--app-dark);
         }
 
-        .belt-label {
+        .battery-label {
             color: white;
             font-family: 'Fredoka One', cursive;
             font-size: 0.85rem;
@@ -123,12 +123,12 @@
             gap: 6px;
         }
 
-        .belt-motifs {
+        .battery-slots {
             display: flex;
             gap: 8px;
         }
 
-        .motif-slot {
+        .energy-slot {
             width: 28px;
             height: 28px;
             border-radius: 50%;
@@ -141,10 +141,10 @@
             transition: all 0.3s ease;
         }
 
-        .motif-slot.filled {
-            background: var(--dojo-gold);
+        .energy-slot.filled {
+            background: var(--app-gold);
             border: 2px solid white;
-            box-shadow: 0 0 8px var(--dojo-gold);
+            box-shadow: 0 0 8px var(--app-gold);
             transform: scale(1.15);
         }
 
@@ -155,7 +155,7 @@
             margin: 0 auto;
             background: #fff200;
             border-radius: 50%;
-            border: 8px solid #ff4757;
+            border: 8px solid #3742fa;
             box-shadow: 0 8px 0 #d2dae2, inset 0 0 15px rgba(0,0,0,0.15);
         }
 
@@ -166,7 +166,7 @@
             transform: translate(-50%, -50%);
             text-align: center;
             background: rgba(255, 255, 255, 0.95);
-            border: 3px solid var(--dojo-dark);
+            border: 3px solid var(--app-dark);
             padding: 10px;
             border-radius: 50%;
             width: 95px;
@@ -186,7 +186,7 @@
         .ring-text {
             font-size: 0.7rem;
             font-weight: bold;
-            color: var(--dojo-dark);
+            color: var(--app-dark);
             margin-top: 2px;
             font-family: 'Fredoka One', cursive;
         }
@@ -196,7 +196,7 @@
             width: 46px;
             height: 46px;
             background: #ffffff;
-            border: 3px solid var(--dojo-dark);
+            border: 3px solid var(--app-dark);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -204,23 +204,23 @@
             cursor: pointer;
             transform: translate(-50%, -50%);
             transition: transform 0.15s ease, background 0.15s ease;
-            box-shadow: 0 4px 0 var(--dojo-dark);
+            box-shadow: 0 4px 0 var(--app-dark);
         }
 
         .case-number {
             font-family: 'Fredoka One', cursive;
             font-size: 1.3rem;
-            color: var(--dojo-dark);
+            color: var(--app-dark);
             z-index: 1;
             pointer-events: none;
         }
 
         .case:active {
             transform: translate(-50%, -47%) scale(0.95);
-            box-shadow: 0 1px 0 var(--dojo-dark);
+            box-shadow: 0 1px 0 var(--app-dark);
         }
 
-        .sumo-badge-container {
+        .pawn-badge-container {
             position: absolute;
             top: -16px;
             display: flex;
@@ -229,11 +229,11 @@
             pointer-events: none;
         }
 
-        .sumo-avatar {
+        .pawn-avatar {
             width: 32px;
             height: 32px;
             border-radius: 50%;
-            border: 2px solid var(--dojo-dark);
+            border: 2px solid var(--app-dark);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -243,14 +243,14 @@
             transition: transform 0.2s;
         }
 
-        .sumo-avatar.red { background: #ff4757; }
-        .sumo-avatar.blue { background: #2ed573; }
+        .pawn-avatar.alpha { background: var(--app-red); }
+        .pawn-avatar.beta { background: var(--app-blue); }
 
-        .sumo-avatar.active-blink {
-            animation: mangaBounce 0.6s infinite alternate;
+        .pawn-avatar.active-blink {
+            animation: robotBounce 0.6s infinite alternate;
         }
 
-        @keyframes mangaBounce {
+        @keyframes robotBounce {
             0% { transform: scale(1) translateY(0); }
             100% { transform: scale(1.35) translateY(-4px); filter: brightness(1.2); }
         }
@@ -258,13 +258,13 @@
         #message-box {
             text-align: center;
             background: #7bed9f;
-            color: var(--dojo-dark);
+            color: var(--app-dark);
             padding: 10px 12px;
             border-radius: 14px;
             font-weight: bold;
             font-size: 0.95rem;
-            border: 3px solid var(--dojo-dark);
-            box-shadow: 0 4px 0 var(--dojo-dark);
+            border: 3px solid var(--app-dark);
+            box-shadow: 0 4px 0 var(--app-dark);
             min-height: 24px;
         }
 
@@ -272,13 +272,13 @@
             background: #ffeaa7;
             padding: 12px;
             border-radius: 16px;
-            border: 3px solid var(--dojo-dark);
+            border: 3px solid var(--app-dark);
         }
 
         .hand-title {
             font-size: 1rem;
             margin-bottom: 8px;
-            color: var(--dojo-dark);
+            color: var(--app-dark);
             font-weight: bold;
             display: flex;
             align-items: center;
@@ -299,35 +299,34 @@
             width: 50px;
             height: 72px;
             background: white;
-            border: 3px solid var(--dojo-dark);
+            border: 3px solid var(--app-dark);
             border-radius: 12px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            box-shadow: 0 4px 0 var(--dojo-dark);
+            box-shadow: 0 4px 0 var(--app-dark);
             transition: all 0.15s ease;
             position: relative;
         }
 
         .card:hover {
             transform: translateY(-5px) rotate(-2deg);
-            background: var(--dojo-gold);
+            background: var(--app-gold);
         }
 
         .card.selected-card {
-            background: #ff4757;
+            background: var(--app-red);
             color: white;
             transform: translateY(-8px) scale(1.08);
-            border-color: var(--dojo-dark);
-            box-shadow: 0 6px 0 var(--dojo-dark);
+            border-color: var(--app-dark);
+            box-shadow: 0 6px 0 var(--app-dark);
         }
 
-        /* Effet magique pour indiquer les cartes jouables en mode Aide */
         .card.hint-playable {
             border-color: #2ed573;
-            box-shadow: 0 0 12px #2ed573, 0 4px 0 var(--dojo-dark);
+            box-shadow: 0 0 12px #2ed573, 0 4px 0 var(--app-dark);
             animation: hintPulse 1s infinite alternate;
         }
 
@@ -350,15 +349,15 @@
         button.action-btn {
             flex: 1;
             min-width: 120px;
-            background: #ff4757;
+            background: var(--app-red);
             color: white;
-            border: 3px solid var(--dojo-dark);
+            border: 3px solid var(--app-dark);
             padding: 10px;
             font-family: 'Fredoka One', cursive;
             font-size: 0.9rem;
             border-radius: 14px;
             cursor: pointer;
-            box-shadow: 0 4px 0 var(--dojo-dark);
+            box-shadow: 0 4px 0 var(--app-dark);
             transition: all 0.1s;
         }
 
@@ -371,16 +370,16 @@
 
         button.action-btn:active:not(:disabled) {
             transform: translateY(3px);
-            box-shadow: 0 1px 0 var(--dojo-dark);
+            box-shadow: 0 1px 0 var(--app-dark);
         }
 
-        button.power-btn { background: #2ed573; color: var(--dojo-dark); }
+        button.power-btn { background: #2ed573; color: var(--app-dark); }
         button.secondary-btn { background: #3742fa; }
     </style>
 </head>
 <body>
 
-    <h1>🤼‍♂️ SUMO MATHS DOJO 🥋</h1>
+    <h1>🤖 MATHS ROBOTS ⚡</h1>
 
     <div id="game-container">
         <div class="status-bar">
@@ -388,18 +387,18 @@
             <div>⭐ Score : <span id="score-count" class="badge">0</span></div>
             <div style="display: flex; gap: 5px;">
                 <button class="action-toggle-btn" id="help-btn" onclick="toggleHelp()">💡 Aide : OFF</button>
-                <button class="action-toggle-btn" id="music-btn" onclick="toggleMusic()" style="background:#ff9ff3;">🎵 Musique : OFF</button>
+                <button class="action-toggle-btn" id="music-btn" onclick="initAudio(); toggleMusic();" style="background:#ff9ff3;">🎵 Audio : OFF</button>
             </div>
         </div>
 
-        <div class="kimono-belt-container" id="belt-container">
-            <div class="belt-label" id="belt-label">🥋 TOUR : ROUGE</div>
-            <div class="belt-motifs" id="belt-motifs">
-                <div class="motif-slot">🌸</div>
-                <div class="motif-slot">🌸</div>
-                <div class="motif-slot">🌸</div>
-                <div class="motif-slot">🌸</div>
-                <div class="motif-slot">🌸</div>
+        <div class="battery-container" id="battery-container">
+            <div class="battery-label" id="battery-label">🔋 TOUR : ALPHA</div>
+            <div class="battery-slots" id="battery-slots">
+                <div class="energy-slot">⚡</div>
+                <div class="energy-slot">⚡</div>
+                <div class="energy-slot">⚡</div>
+                <div class="energy-slot">⚡</div>
+                <div class="energy-slot">⚡</div>
             </div>
         </div>
 
@@ -407,8 +406,8 @@
 
         <div class="board-container" id="board">
             <div class="ring-center">
-                <div class="ring-icon">🍙</div>
-                <div class="ring-text" id="center-turn-text">DOJO</div>
+                <div class="ring-icon">💻</div>
+                <div class="ring-text" id="center-turn-text">STUDIO</div>
             </div>
         </div>
 
@@ -418,22 +417,22 @@
         </div>
 
         <div class="controls">
-            <button class="action-btn power-btn" id="power-btn" onclick="usePower()" disabled>⚡ Super Pouvoir</button>
+            <button class="action-btn power-btn" id="power-btn" onclick="usePower()" disabled>⚡ Super Mode</button>
             <button class="action-btn secondary-btn" onclick="drawAndRemix()">🃏 Piocher & Remuer</button>
             <button class="action-btn" onclick="resetGame()">🔄 Recommencer</button>
         </div>
     </div>
 
     <script>
-        let sumoRed = 2;
-        let sumoBlue = 5;
-        let activeSumo = 'red';
+        let pawnAlpha = 2;
+        let pawnBeta = 5;
+        let activeTurn = 'alpha';
         let score = 0;
         let energyLevel = 0; 
         const MAX_ENERGY = 5;
         let powerMode = 0; 
-        let step1Red = null;
-        let helpMode = false; // Mode aide activable
+        let step1Alpha = null;
+        let helpMode = false;
 
         let playerCards = [];
         let selectedCardIndex = null;
@@ -451,11 +450,11 @@
             const btn = document.getElementById('music-btn');
 
             if (musicPlaying) {
-                btn.innerText = "🎵 Musique : ON";
+                btn.innerText = "🎵 Audio : ON";
                 btn.style.background = "#2ed573";
                 startAmbientMusic();
             } else {
-                btn.innerText = "🎵 Musique : OFF";
+                btn.innerText = "🎵 Audio : OFF";
                 btn.style.background = "#ff9ff3";
                 stopAmbientMusic();
             }
@@ -517,15 +516,6 @@
             }
             if (audioCtx.state === 'suspended') {
                 audioCtx.resume();
-            }
-            if (!musicPlaying) {
-                musicPlaying = true;
-                const btn = document.getElementById('music-btn');
-                if(btn) {
-                    btn.innerText = "🎵 Musique : ON";
-                    btn.style.background = "#2ed573";
-                }
-                startAmbientMusic();
             }
         }
 
@@ -624,7 +614,7 @@
             caseEl.appendChild(numEl);
 
             const badgeContainer = document.createElement('div');
-            badgeContainer.className = 'sumo-badge-container';
+            badgeContainer.className = 'pawn-badge-container';
             badgeContainer.id = `badges-${i}`;
             caseEl.appendChild(badgeContainer);
 
@@ -632,16 +622,16 @@
         }
 
         function resetGame() {
-            sumoRed = Math.floor(Math.random() * 4) + 1;
+            pawnAlpha = Math.floor(Math.random() * 4) + 1;
             do {
-                sumoBlue = Math.floor(Math.random() * 5) + 5;
-            } while (sumoBlue === sumoRed);
+                pawnBeta = Math.floor(Math.random() * 5) + 5;
+            } while (pawnBeta === pawnAlpha);
 
-            activeSumo = 'red';
+            activeTurn = 'alpha';
             score = 0;
             energyLevel = 0;
             powerMode = 0;
-            step1Red = null;
+            step1Alpha = null;
             playerCards = [];
 
             for(let i = 0; i < 8; i++) {
@@ -650,7 +640,7 @@
 
             selectedCardIndex = null;
             updateUI();
-            setMessage("Vide tes 8 cartes pour gagner ! Tour du Sumo Rouge 🤼‍♂️.");
+            setMessage("Vide tes 8 cartes pour gagner ! Tour du Robot Alpha 🤖.");
         }
 
         function getRandomCard() {
@@ -659,18 +649,16 @@
             return a * b;
         }
 
-        // Vérifie si une carte de la main peut être jouée avec la configuration actuelle des sumos
         function isCardPlayable(cardVal) {
-            if (powerMode > 0) {
-                // En mode pouvoir, vérifie si n'importe quel mouvement vers une case 0-10 est possible
-                for (let target = 0; target <= 10; target++) {
-                    if (target * sumoBlue === cardVal || sumoRed * target === cardVal) return true;
-                }
-            } else {
-                // En mode normal, vérifie par rapport au sumo actif
-                for (let target = 0; target <= 10; target++) {
-                    if (activeSumo === 'red' && target * sumoBlue === cardVal) return true;
-                    if (activeSumo === 'blue' && sumoRed * target === cardVal) return true;
+            for (let tAlpha = 0; tAlpha <= 10; tAlpha++) {
+                for (let tBeta = 0; tBeta <= 10; tBeta++) {
+                    if (tAlpha * tBeta === cardVal) {
+                        if (powerMode > 0 || powerMode === 2 || powerMode === 3) {
+                            return true;
+                        }
+                        if (activeTurn === 'alpha' && tBeta === pawnBeta) return true;
+                        if (activeTurn === 'beta' && tAlpha === pawnAlpha) return true;
+                    }
                 }
             }
             return false;
@@ -696,51 +684,57 @@
             let isValid = false;
 
             if (powerMode === 2) {
-                step1Red = targetValue;
-                powerMode = 3;
+                // Étape 1 : On déplace immédiatement le premier pion (Alpha) sur la case cible
+                step1Alpha = targetValue;
+                pawnAlpha = targetValue; // Mise à jour visuelle immédiate du pion sur le plateau !
+                powerMode = 3; 
                 playSound('select');
-                setMessage("🔥 Double Pouvoir : Premier sumo placé ! Clique sur la case du second sumo.");
+                setMessage("🔥 Double Mode : Premier robot placé ! Clique sur la case du second robot.");
                 updateUI();
                 return;
             } else if (powerMode === 3) {
-                let finalRed = step1Red;
-                let finalBlue = targetValue;
+                // Étape 2 : On place le second pion (Beta) et on valide globalement
+                let finalAlpha = step1Alpha;
+                let finalBeta = targetValue;
 
-                if (finalRed * finalBlue === cardVal || targetValue * sumoRed === cardVal || step1Red * targetValue === cardVal) {
-                    if (finalRed * finalBlue === cardVal) {
-                        sumoRed = finalRed;
-                        sumoBlue = finalBlue;
-                    } else if (targetValue * sumoRed === cardVal) {
-                        sumoBlue = targetValue;
+                if (finalAlpha * finalBeta === cardVal || targetValue * pawnAlpha === cardVal || step1Alpha * targetValue === cardVal) {
+                    if (finalAlpha * finalBeta === cardVal) {
+                        pawnAlpha = finalAlpha;
+                        pawnBeta = finalBeta;
+                    } else if (targetValue * pawnAlpha === cardVal) {
+                        pawnBeta = targetValue;
                     } else {
-                        sumoRed = step1Red;
-                        sumoBlue = targetValue;
+                        pawnAlpha = step1Alpha;
+                        pawnBeta = targetValue;
                     }
                     isValid = true;
                     powerMode = 0;
                 }
                 
                 if (!isValid) {
+                    // En cas d'échec de la formule, on réinitialise proprement le niveau 2
                     powerMode = 2;
-                    step1Red = null;
+                    step1Alpha = null;
                     playSound('fail');
-                    setMessage("Oups ! Cette combinaison ne fait pas " + cardVal + ". Réessaie le double pouvoir.");
+                    setMessage("Oups ! Cette combinaison ne fait pas " + cardVal + ". Réessaie le double mode.");
                     updateUI();
                     return;
                 }
             } else if (powerMode === 1) {
-                if (targetValue * sumoBlue === cardVal || sumoRed * targetValue === cardVal) {
-                    if (targetValue * sumoBlue === cardVal) sumoRed = targetValue;
-                    else sumoBlue = targetValue;
+                // Super Mode Niveau 1 (1 robot libre)
+                if (targetValue * pawnBeta === cardVal || pawnAlpha * targetValue === cardVal) {
+                    if (targetValue * pawnBeta === cardVal) pawnAlpha = targetValue;
+                    else pawnBeta = targetValue;
                     isValid = true;
                     powerMode = 0;
                 }
             } else {
-                if (activeSumo === 'red' && targetValue * sumoBlue === cardVal) {
-                    sumoRed = targetValue;
+                // Mode normal (alternance stricte)
+                if (activeTurn === 'alpha' && targetValue * pawnBeta === cardVal) {
+                    pawnAlpha = targetValue;
                     isValid = true;
-                } else if (activeSumo === 'blue' && sumoRed * targetValue === cardVal) {
-                    sumoBlue = targetValue;
+                } else if (activeTurn === 'beta' && pawnAlpha * targetValue === cardVal) {
+                    pawnBeta = targetValue;
                     isValid = true;
                 }
             }
@@ -753,14 +747,14 @@
                 score += 10;
                 energyLevel = Math.min(MAX_ENERGY, energyLevel + 1);
                 if (powerMode === 0) {
-                    activeSumo = activeSumo === 'red' ? 'blue' : 'red';
+                    activeTurn = activeTurn === 'alpha' ? 'beta' : 'alpha';
                 }
 
                 updateUI();
 
                 if (playerCards.length === 0) {
-                    setMessage("🏆 VICTOIRE MANGA ! Tu as vidé ton jeu !");
-                    alert("🎉 Incroyable ! Tu es un grand Yokozuna des maths !");
+                    setMessage("🏆 VICTOIRE ! Tu as programmé tous tes calculs !");
+                    alert("🎉 Incroyable ! Tu es un maître du calcul mental !");
                     resetGame();
                 } else {
                     setMessage(`Super coup ! Il reste ${playerCards.length} cartes.`);
@@ -780,12 +774,12 @@
             if (energyLevel >= 5) {
                 energyLevel = 0;
                 powerMode = 2;
-                step1Red = null;
-                setMessage("🔥 DOUBLE POUVOIR NIVEAU 2 ACTIVÉ ! Clique sur la case du premier sumo.");
+                step1Alpha = null;
+                setMessage("🔥 DOUBLE MODE ACTIF ! Clique sur la case du premier robot.");
             } else if (energyLevel >= 3) {
                 energyLevel -= 3;
                 powerMode = 1;
-                setMessage("⚡ SUPER POUVOIR NIVEAU 1 ACTIVÉ ! Déplace le sumo de ton choix librement !");
+                setMessage("⚡ SUPER MODE ACTIF ! Déplace le robot de ton choix librement !");
             }
             updateUI();
         }
@@ -807,25 +801,22 @@
 
             if (validPairs.length > 0) {
                 const pair = validPairs[Math.floor(Math.random() * validPairs.length)];
-                if (activeSumo === 'red') sumoBlue = pair.b;
-                else sumoRed = pair.a;
-            } else {
-                if (activeSumo === 'red') sumoBlue = (sumoBlue + 3) % 10 + 1;
-                else sumoRed = (sumoRed + 3) % 10 + 1;
+                pawnAlpha = pair.a;
+                pawnBeta = pair.b;
             }
 
-            activeSumo = activeSumo === 'red' ? 'blue' : 'red';
+            activeTurn = activeTurn === 'alpha' ? 'beta' : 'alpha';
             selectedCardIndex = null;
             updateUI();
-            setMessage("✨ Une carte piochée et le plateau remué ! Une opportunité s'est créée dans ta main.");
+            setMessage("✨ Une carte piochée et les positions ajustées pour être jouables !");
         }
 
         function updateUI() {
             document.getElementById('player-cards-count').innerText = playerCards.length;
             document.getElementById('score-count').innerText = score;
 
-            const beltContainer = document.getElementById('belt-container');
-            const slots = document.querySelectorAll('.motif-slot');
+            const batteryContainer = document.getElementById('battery-container');
+            const slots = document.querySelectorAll('.energy-slot');
             
             slots.forEach((slot, idx) => {
                 if (idx < energyLevel) {
@@ -835,34 +826,34 @@
                 }
             });
 
-            beltContainer.className = "kimono-belt-container";
-            if (energyLevel >= 5) beltContainer.classList.add('ready-l2');
-            else if (energyLevel >= 3) beltContainer.classList.add('ready-l1');
+            batteryContainer.className = "battery-container";
+            if (energyLevel >= 5) batteryContainer.classList.add('ready-l2');
+            else if (energyLevel >= 3) batteryContainer.classList.add('ready-l1');
 
             document.getElementById('power-btn').disabled = (energyLevel < 3);
             if (energyLevel >= 5) {
-                document.getElementById('power-btn').innerText = "🔥 Double Pouvoir (Niv 2)";
+                document.getElementById('power-btn').innerText = "🔥 Double Mode (Niv 2)";
             } else {
-                document.getElementById('power-btn').innerText = "⚡ Super Pouvoir (Niv 1)";
+                document.getElementById('power-btn').innerText = "⚡ Super Mode (Niv 1)";
             }
 
-            document.getElementById('belt-label').innerText = powerMode > 0 ? "⚡ POUVOIR ACTIF" : `🥋 TOUR : ${activeSumo === 'red' ? 'ROUGE' : 'VERT'}`;
-            document.getElementById('center-turn-text').innerText = powerMode > 0 ? "⚡ LIBRE" : `TOUR ${activeSumo.toUpperCase()}`;
+            document.getElementById('battery-label').innerText = powerMode > 0 ? "⚡ MODE LIBRE" : `🤖 TOUR : ${activeTurn.toUpperCase()}`;
+            document.getElementById('center-turn-text').innerText = powerMode > 0 ? "⚡ LIBRE" : `TOUR ${activeTurn.toUpperCase()}`;
 
             for(let i=0; i<=10; i++) {
                 const container = document.getElementById(`badges-${i}`);
                 container.innerHTML = '';
 
-                if (i === sumoRed) {
-                    const avatarR = document.createElement('div');
-                    avatarR.className = `sumo-avatar red ${(activeSumo === 'red' || powerMode > 0) ? 'active-blink' : ''}`;
-                    avatarR.innerText = '🤼‍♂️';
-                    container.appendChild(avatarR);
+                if (i === pawnAlpha) {
+                    const avatarA = document.createElement('div');
+                    avatarA.className = `pawn-avatar alpha ${(activeTurn === 'alpha' || powerMode > 0) ? 'active-blink' : ''}`;
+                    avatarA.innerText = '🤖';
+                    container.appendChild(avatarA);
                 }
-                if (i === sumoBlue) {
+                if (i === pawnBeta) {
                     const avatarB = document.createElement('div');
-                    avatarB.className = `sumo-avatar blue ${(activeSumo === 'blue' || powerMode > 0) ? 'active-blink' : ''}`;
-                    avatarB.innerText = '🍙';
+                    avatarB.className = `pawn-avatar beta ${(activeTurn === 'beta' || powerMode > 0) ? 'active-blink' : ''}`;
+                    avatarB.innerText = '👾';
                     container.appendChild(avatarB);
                 }
             }
@@ -872,7 +863,6 @@
             playerCards.forEach((cardVal, idx) => {
                 const cardEl = document.createElement('div');
                 
-                // Vérifie si la carte est jouable et si le mode aide est activé
                 let isPlayable = isCardPlayable(cardVal);
                 let hintClass = (helpMode && isPlayable) ? 'hint-playable' : '';
 
