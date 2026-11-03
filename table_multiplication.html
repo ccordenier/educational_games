@@ -2,8 +2,31 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Maths Robots - Studio de Multiplication</title>
+    
+    <!-- Paramètres PWA pour l'installation en plein écran sur smartphone -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Maths Robots">
+    <meta name="theme-color" content="#3742fa">
+
+    <!-- Manifest PWA intégré dynamiquement pour rendre l'app installable -->
+    <link rel="manifest" href="data:application/manifest+json;charset=utf-8,{
+        %22name%22: %22Maths Robots%22,
+        %22short_name%22: %22RobotsMaths%22,
+        %22start_url%22: %22.%22,
+        %22display%22: %22standalone%22,
+        %22background_color%22: %22#3742fa%22,
+        %22theme_color%22: %22#3742fa%22,
+        %22icons%22: [{
+            %22src%22: %22data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>%22,
+            %22sizes%22: %22192x192 512x512%22,
+            %22type%22: %22image/svg+xml%22
+        }]
+    }">
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Sniglet:wght@800&display=swap');
 
@@ -406,7 +429,7 @@
 
         <div class="board-container" id="board">
             <div class="ring-center">
-                <div class="ring-icon">💻</div>
+                <div class="icon">💻</div>
                 <div class="ring-text" id="center-turn-text">STUDIO</div>
             </div>
         </div>
@@ -684,16 +707,14 @@
             let isValid = false;
 
             if (powerMode === 2) {
-                // Étape 1 : On déplace immédiatement le premier pion (Alpha) sur la case cible
                 step1Alpha = targetValue;
-                pawnAlpha = targetValue; // Mise à jour visuelle immédiate du pion sur le plateau !
+                pawnAlpha = targetValue; // Déplacement visuel immédiat du premier pion
                 powerMode = 3; 
                 playSound('select');
                 setMessage("🔥 Double Mode : Premier robot placé ! Clique sur la case du second robot.");
                 updateUI();
                 return;
             } else if (powerMode === 3) {
-                // Étape 2 : On place le second pion (Beta) et on valide globalement
                 let finalAlpha = step1Alpha;
                 let finalBeta = targetValue;
 
@@ -712,7 +733,6 @@
                 }
                 
                 if (!isValid) {
-                    // En cas d'échec de la formule, on réinitialise proprement le niveau 2
                     powerMode = 2;
                     step1Alpha = null;
                     playSound('fail');
@@ -721,7 +741,6 @@
                     return;
                 }
             } else if (powerMode === 1) {
-                // Super Mode Niveau 1 (1 robot libre)
                 if (targetValue * pawnBeta === cardVal || pawnAlpha * targetValue === cardVal) {
                     if (targetValue * pawnBeta === cardVal) pawnAlpha = targetValue;
                     else pawnBeta = targetValue;
@@ -729,7 +748,6 @@
                     powerMode = 0;
                 }
             } else {
-                // Mode normal (alternance stricte)
                 if (activeTurn === 'alpha' && targetValue * pawnBeta === cardVal) {
                     pawnAlpha = targetValue;
                     isValid = true;
