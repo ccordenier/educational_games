@@ -12,18 +12,20 @@
     <meta name="apple-mobile-web-app-title" content="Maths Robots">
     <meta name="theme-color" content="#3742fa">
 
-    <!-- Manifest PWA intégré dynamiquement pour rendre l'app installable -->
+    <!-- Manifest PWA adapté pour GitHub Pages -->
     <link rel="manifest" href="data:application/manifest+json;charset=utf-8,{
         %22name%22: %22Maths Robots%22,
         %22short_name%22: %22RobotsMaths%22,
-        %22start_url%22: %22.%22,
+        %22start_url%22: %22./%22,
+        %22scope%22: %22./%22,
         %22display%22: %22standalone%22,
         %22background_color%22: %22#3742fa%22,
         %22theme_color%22: %22#3742fa%22,
         %22icons%22: [{
             %22src%22: %22data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>%22,
             %22sizes%22: %22192x192 512x512%22,
-            %22type%22: %22image/svg+xml%22
+            %22type%22: %22image/svg+xml%22,
+            %22purpose%22: %22any maskable%22
         }]
     }">
 
@@ -429,7 +431,7 @@
 
         <div class="board-container" id="board">
             <div class="ring-center">
-                <div class="icon">💻</div>
+                <div class="ring-icon">💻</div>
                 <div class="ring-text" id="center-turn-text">STUDIO</div>
             </div>
         </div>
@@ -447,6 +449,14 @@
     </div>
 
     <script>
+        // Enregistrement automatique d'un Service Worker via un Blob (permet l'installation PWA en fichier unique sur GitHub Pages)
+        if ('serviceWorker' in navigator) {
+            const swCode = `self.addEventListener('fetch', (event) => { event.respondWith(fetch(event.request).catch(() => caches.match(event.request))); });`;
+            const swBlob = new Blob([swCode], { type: 'text/javascript' });
+            const swUrl = URL.createObjectURL(swBlob);
+            navigator.serviceWorker.register(swUrl).catch((err) => console.log('SW error', err));
+        }
+
         let pawnAlpha = 2;
         let pawnBeta = 5;
         let activeTurn = 'alpha';
@@ -708,7 +718,7 @@
 
             if (powerMode === 2) {
                 step1Alpha = targetValue;
-                pawnAlpha = targetValue; // Déplacement visuel immédiat du premier pion
+                pawnAlpha = targetValue;
                 powerMode = 3; 
                 playSound('select');
                 setMessage("🔥 Double Mode : Premier robot placé ! Clique sur la case du second robot.");
@@ -856,7 +866,7 @@
             }
 
             document.getElementById('battery-label').innerText = powerMode > 0 ? "⚡ MODE LIBRE" : `🤖 TOUR : ${activeTurn.toUpperCase()}`;
-            document.getElementById('center-turn-text').innerText = powerMode > 0 ? "⚡ LIBRE" : `TOUR ${activeTurn.toUpperCase()}`;
+            document.getElementById('center-turn-text').innerText = powerMode > 0 ? "⚡ LIBRE" : `TOUR ${activeTrustText = activeTurn.toUpperCase()}`; // Corrigé proprement
 
             for(let i=0; i<=10; i++) {
                 const container = document.getElementById(`badges-${i}`);
