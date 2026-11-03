@@ -76,8 +76,8 @@
             font-family: 'Fredoka One', cursive;
         }
 
-        .music-toggle-btn {
-            background: #ff9ff3;
+        .action-toggle-btn {
+            background: #ffa502;
             color: var(--dojo-dark);
             border: 2px solid white;
             padding: 4px 10px;
@@ -88,11 +88,10 @@
             transition: transform 0.1s;
         }
 
-        .music-toggle-btn:active {
+        .action-toggle-btn:active {
             transform: scale(0.95);
         }
 
-        /* Ceinture Obi Kimono à 5 motifs pour les 2 niveaux de pouvoir */
         .kimono-belt-container {
             background: var(--obi-black);
             border: 3px solid var(--dojo-dark);
@@ -325,6 +324,18 @@
             box-shadow: 0 6px 0 var(--dojo-dark);
         }
 
+        /* Effet magique pour indiquer les cartes jouables en mode Aide */
+        .card.hint-playable {
+            border-color: #2ed573;
+            box-shadow: 0 0 12px #2ed573, 0 4px 0 var(--dojo-dark);
+            animation: hintPulse 1s infinite alternate;
+        }
+
+        @keyframes hintPulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.06); }
+        }
+
         .card-number {
             font-family: 'Fredoka One', cursive;
             font-size: 1.35rem;
@@ -375,10 +386,12 @@
         <div class="status-bar">
             <div>🎴 Cartes : <span id="player-cards-count" class="badge">8</span></div>
             <div>⭐ Score : <span id="score-count" class="badge">0</span></div>
-            <button class="music-toggle-btn" id="music-btn" onclick="toggleMusic()">🎵 Musique : OFF</button>
+            <div style="display: flex; gap: 5px;">
+                <button class="action-toggle-btn" id="help-btn" onclick="toggleHelp()">💡 Aide : OFF</button>
+                <button class="action-toggle-btn" id="music-btn" onclick="toggleMusic()" style="background:#ff9ff3;">🎵 Musique : OFF</button>
+            </div>
         </div>
 
-        <!-- Ceinture Obi Kimono à 5 motifs (2 Niveaux de Pouvoir) -->
         <div class="kimono-belt-container" id="belt-container">
             <div class="belt-label" id="belt-label">🥋 TOUR : ROUGE</div>
             <div class="belt-motifs" id="belt-motifs">
@@ -418,8 +431,9 @@
         let score = 0;
         let energyLevel = 0; 
         const MAX_ENERGY = 5;
-        let powerMode = 0; // 0: Normal, 1: Pouvoir Niv 1 (1 sumo libre), 2: Pouvoir Niv 2 (2 sumos libres)
-        let movesLeftInPower = 0;
+        let powerMode = 0; 
+        let step1Red = null;
+        let helpMode = false; // Mode aide activable
 
         let playerCards = [];
         let selectedCardIndex = null;
@@ -445,6 +459,21 @@
                 btn.style.background = "#ff9ff3";
                 stopAmbientMusic();
             }
+        }
+
+        function toggleHelp() {
+            helpMode = !helpMode;
+            const btn = document.getElementById('help-btn');
+            if (helpMode) {
+                btn.innerText = "💡 Aide : ON";
+                btn.style.background = "#2ed573";
+                setMessage("💡 Mode Aide activé : regarde les cartes qui scintillent !");
+            } else {
+                btn.innerText = "💡 Aide : OFF";
+                btn.style.background = "#ffa502";
+                setMessage("💡 Mode Aide désactivé.");
+            }
+            updateUI();
         }
 
         function startAmbientMusic() {
@@ -603,7 +632,6 @@
         }
 
         function resetGame() {
-            // Position de départ aléatoire sur le cercle (ex: un rouge entre 1 et 4, un bleu entre 5 et 9)
             sumoRed = Math.floor(Math.random() * 4) + 1;
             do {
                 sumoBlue = Math.floor(Math.random() * 5) + 5;
@@ -613,11 +641,11 @@
             score = 0;
             energyLevel = 0;
             powerMode = 0;
+            step1Red = null;
             playerCards = [];
 
-            // Distribution initiale bien dispersée
             for(let i = 0; i < 8; i++) {
-                playerCards.push(getPlayableCard());
+                playerCards.push(getRandomCard());
             }
 
             selectedCardIndex = null;
@@ -625,16 +653,27 @@
             setMessage("Vide tes 8 cartes pour gagner ! Tour du Sumo Rouge 🤼‍♂️.");
         }
 
-        function getPlayableCard() {
-            if (Math.random() < 0.7) {
-                const target = Math.random() < 0.5 ? sumoRed : sumoBlue;
-                const other = Math.floor(Math.random() * 9) + 1;
-                return target * other;
+        function getRandomCard() {
+            const a = Math.floor(Math.random() * 8) + 2; 
+            const b = Math.floor(Math.random() * 10) + 1; 
+            return a * b;
+        }
+
+        // Vérifie si une carte de la main peut être jouée avec la configuration actuelle des sumos
+        function isCardPlayable(cardVal) {
+            if (powerMode > 0) {
+                // En mode pouvoir, vérifie si n'importe quel mouvement vers une case 0-10 est possible
+                for (let target = 0; target <= 10; target++) {
+                    if (target * sumoBlue === cardVal || sumoRed * target === cardVal) return true;
+                }
             } else {
-                const a = Math.floor(Math.random() * 8) + 2;
-                const b = Math.floor(Math.random() * 9) + 1;
-                return a * b;
+                // En mode normal, vérifie par rapport au sumo actif
+                for (let target = 0; target <= 10; target++) {
+                    if (activeSumo === 'red' && target * sumoBlue === cardVal) return true;
+                    if (activeSumo === 'blue' && sumoRed * target === cardVal) return true;
+                }
             }
+            return false;
         }
 
         function selectCard(index) {
@@ -654,60 +693,56 @@
             }
 
             const cardVal = playerCards[selectedCardIndex];
-            let moveRedValid = (targetValue * sumoBlue === cardVal && targetValue !== sumoRed);
-            let moveBlueValid = (sumoRed * targetValue === cardVal && targetValue !== sumoBlue);
             let isValid = false;
 
             if (powerMode === 2) {
-                // Niveau 2 : Déplace les 2 sumos l'un après l'autre
-                if (moveRedValid && movesLeftInPower === 2) {
-                    sumoRed = targetValue;
-                    isValid = true;
-                    movesLeftInPower = 1;
-                    setMessage("⚡ Super Pouvoir Niv 2 : Premier sumo déplacé ! Déplace le second sumo.");
-                    updateUI();
-                    return;
-                } else if (moveBlueValid && movesLeftInPower === 1) {
-                    sumoBlue = targetValue;
+                step1Red = targetValue;
+                powerMode = 3;
+                playSound('select');
+                setMessage("🔥 Double Pouvoir : Premier sumo placé ! Clique sur la case du second sumo.");
+                updateUI();
+                return;
+            } else if (powerMode === 3) {
+                let finalRed = step1Red;
+                let finalBlue = targetValue;
+
+                if (finalRed * finalBlue === cardVal || targetValue * sumoRed === cardVal || step1Red * targetValue === cardVal) {
+                    if (finalRed * finalBlue === cardVal) {
+                        sumoRed = finalRed;
+                        sumoBlue = finalBlue;
+                    } else if (targetValue * sumoRed === cardVal) {
+                        sumoBlue = targetValue;
+                    } else {
+                        sumoRed = step1Red;
+                        sumoBlue = targetValue;
+                    }
                     isValid = true;
                     powerMode = 0;
-                } else if (moveRedValid && movesLeftInPower === 1) {
-                    sumoRed = targetValue;
-                    isValid = true;
-                    powerMode = 0;
-                } else if (moveBlueValid && movesLeftInPower === 2) {
-                    sumoBlue = targetValue;
-                    isValid = true;
-                    movesLeftInPower = 1;
-                    setMessage("⚡ Super Pouvoir Niv 2 : Premier sumo déplacé ! Déplace le second sumo.");
+                }
+                
+                if (!isValid) {
+                    powerMode = 2;
+                    step1Red = null;
+                    playSound('fail');
+                    setMessage("Oups ! Cette combinaison ne fait pas " + cardVal + ". Réessaie le double pouvoir.");
                     updateUI();
                     return;
                 }
             } else if (powerMode === 1) {
-                // Niveau 1 : 1 seul sumo libre
-                if (moveRedValid) { sumoRed = targetValue; isValid = true; }
-                else if (moveBlueValid) { sumoBlue = targetValue; isValid = true; }
-                if (isValid) powerMode = 0;
+                if (targetValue * sumoBlue === cardVal || sumoRed * targetValue === cardVal) {
+                    if (targetValue * sumoBlue === cardVal) sumoRed = targetValue;
+                    else sumoBlue = targetValue;
+                    isValid = true;
+                    powerMode = 0;
+                }
             } else {
-                // Mode normal avec alternance stricte
-                if (activeSumo === 'red' && moveRedValid) {
+                if (activeSumo === 'red' && targetValue * sumoBlue === cardVal) {
                     sumoRed = targetValue;
                     isValid = true;
-                } else if (activeSumo === 'blue' && moveBlueValid) {
+                } else if (activeSumo === 'blue' && sumoRed * targetValue === cardVal) {
                     sumoBlue = targetValue;
                     isValid = true;
                 }
-            }
-
-            if (targetValue === sumoRed && (activeSumo === 'red' || powerMode > 0)) {
-                setMessage("⚠️ Ce sumo est déjà sur cette case ! Choisis une autre case.");
-                playSound('fail');
-                return;
-            }
-            if (targetValue === sumoBlue && (activeSumo === 'blue' || powerMode > 0)) {
-                setMessage("⚠️ Ce sumo est déjà sur cette case ! Choisis une autre case.");
-                playSound('fail');
-                return;
             }
 
             if (isValid) {
@@ -732,7 +767,7 @@
                 }
             } else {
                 playSound('fail');
-                setMessage("Oups ! Ce calcul ne marche pas ou le sumo est déjà sur cette case. Réessaie !");
+                setMessage("Oups ! Ce calcul ne correspond pas avec la carte sélectionnée. Réessaie !");
             }
         }
 
@@ -743,13 +778,11 @@
             playSound('power');
             
             if (energyLevel >= 5) {
-                // Niveau 2 atteint (5 étoiles) : Déplacement de DEUX sumos
                 energyLevel = 0;
                 powerMode = 2;
-                movesLeftInPower = 2;
-                setMessage("🔥 SUPER POUVOIR NIVEAU 2 ACTIVÉ ! Tu peux déplacer les DEUX sumos de suite !");
+                step1Red = null;
+                setMessage("🔥 DOUBLE POUVOIR NIVEAU 2 ACTIVÉ ! Clique sur la case du premier sumo.");
             } else if (energyLevel >= 3) {
-                // Niveau 1 atteint (3 étoiles) : Déplacement d'un sumo libre
                 energyLevel -= 3;
                 powerMode = 1;
                 setMessage("⚡ SUPER POUVOIR NIVEAU 1 ACTIVÉ ! Déplace le sumo de ton choix librement !");
@@ -761,17 +794,30 @@
             initAudio();
             playSound('fail');
             
-            if (Math.random() < 0.5) {
-                sumoRed = (sumoRed + 1) % 11;
-            } else {
-                sumoBlue = (sumoBlue + 2) % 11;
+            playerCards.push(getRandomCard());
+
+            const targetCard = playerCards[Math.floor(Math.random() * playerCards.length)];
+            let validPairs = [];
+            for (let a = 1; a <= 10; a++) {
+                if (targetCard % a === 0) {
+                    let b = targetCard / a;
+                    if (b <= 10) validPairs.push({ a, b });
+                }
             }
 
-            playerCards.push(getPlayableCard());
+            if (validPairs.length > 0) {
+                const pair = validPairs[Math.floor(Math.random() * validPairs.length)];
+                if (activeSumo === 'red') sumoBlue = pair.b;
+                else sumoRed = pair.a;
+            } else {
+                if (activeSumo === 'red') sumoBlue = (sumoBlue + 3) % 10 + 1;
+                else sumoRed = (sumoRed + 3) % 10 + 1;
+            }
+
             activeSumo = activeSumo === 'red' ? 'blue' : 'red';
             selectedCardIndex = null;
             updateUI();
-            setMessage("✨ Plateau remué et carte piochée ! De nouvelles opportunités s'offrent à toi.");
+            setMessage("✨ Une carte piochée et le plateau remué ! Une opportunité s'est créée dans ta main.");
         }
 
         function updateUI() {
@@ -825,7 +871,12 @@
             handContainer.innerHTML = '';
             playerCards.forEach((cardVal, idx) => {
                 const cardEl = document.createElement('div');
-                cardEl.className = `card ${selectedCardIndex === idx ? 'selected-card' : ''}`;
+                
+                // Vérifie si la carte est jouable et si le mode aide est activé
+                let isPlayable = isCardPlayable(cardVal);
+                let hintClass = (helpMode && isPlayable) ? 'hint-playable' : '';
+
+                cardEl.className = `card ${selectedCardIndex === idx ? 'selected-card' : ''} ${hintClass}`;
                 cardEl.innerHTML = `<div class="card-number">${cardVal}</div>`;
                 cardEl.onclick = () => selectCard(idx);
                 handContainer.appendChild(cardEl);
