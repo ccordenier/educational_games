@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Maths Robots - Studio de Multiplication</title>
+    <title>Maths Robots - Studio de Calcul</title>
     
-    <!-- Paramètres PWA pour l'installation en plein écran sur smartphone -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -43,7 +42,7 @@
             color: var(--app-gold);
             margin: 0 0 8px 0;
             text-shadow: 3px 3px 0px var(--app-dark), -2px -2px 0px var(--app-dark);
-            font-size: 2rem;
+            font-size: 1.8rem;
             text-align: center;
             letter-spacing: 2px;
         }
@@ -62,6 +61,55 @@
             box-sizing: border-box;
             background-image: radial-gradient(#d2dae2 15%, transparent 16%);
             background-size: 18px 18px;
+        }
+
+        #mode-select-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            padding: 20px 0;
+        }
+
+        .mode-card {
+            width: 100%;
+            max-width: 350px;
+            background: #ffeaa7;
+            border: 4px solid var(--app-dark);
+            border-radius: 18px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 0 6px 0 var(--app-dark);
+            transition: transform 0.1s, background 0.1s;
+        }
+
+        .mode-card:hover {
+            transform: translateY(-4px);
+            background: var(--app-gold);
+        }
+
+        .mode-card:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 var(--app-dark);
+        }
+
+        .mode-title {
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.2rem;
+            color: var(--app-dark);
+            margin-bottom: 5px;
+        }
+
+        .mode-desc {
+            font-size: 0.9rem;
+            color: #485460;
+        }
+
+        #main-game-ui {
+            display: none;
+            flex-direction: column;
+            gap: 12px;
         }
 
         .status-bar {
@@ -358,7 +406,7 @@
 
         button.action-btn {
             flex: 1;
-            min-width: 120px;
+            min-width: 110px;
             background: var(--app-red);
             color: white;
             border: 3px solid var(--app-dark);
@@ -385,6 +433,7 @@
 
         button.power-btn { background: #2ed573; color: var(--app-dark); }
         button.secondary-btn { background: #3742fa; }
+        button.menu-btn { background: #ffa502; color: var(--app-dark); }
     </style>
 </head>
 <body>
@@ -392,60 +441,81 @@
     <h1>🤖 MATHS ROBOTS ⚡</h1>
 
     <div id="game-container">
-        <div class="status-bar">
-            <div>🎴 Cartes : <span id="player-cards-count" class="badge">8</span></div>
-            <div>⭐ Score : <span id="score-count" class="badge">0</span></div>
-            <div style="display: flex; gap: 5px;">
-                <button class="action-toggle-btn" id="help-btn" onclick="toggleHelp()">💡 Aide : OFF</button>
-                <button class="action-toggle-btn" id="music-btn" onclick="initAudio(); toggleMusic();" style="background:#ff9ff3;">🎵 Audio : OFF</button>
+        
+        <!-- ÉCRAN DE SÉLECTION DU MODE -->
+        <div id="mode-select-screen">
+            <div style="font-family: 'Fredoka One', cursive; font-size: 1.2rem; color: var(--app-dark); text-align: center; margin-top: 5px;">
+                Choisis ton mode de jeu :
+            </div>
+            
+            <div class="mode-card" onclick="startGameMode('mult')">
+                <div class="mode-title">✖️ Tables de Multiplication</div>
+                <div class="mode-desc">Multiplie la position des deux robots (CM1)</div>
+            </div>
+
+            <div class="mode-card" onclick="startGameMode('add10')" style="background: #7bed9f;">
+                <div class="mode-title">➕ Compléments à 10</div>
+                <div class="mode-desc">Additionne les robots pour faire de 2 à 10 (CP)</div>
+            </div>
+
+            <div class="mode-card" onclick="startGameMode('add20')" style="background: #70a1ff;">
+                <div class="mode-title">➕ Compléments à 20</div>
+                <div class="mode-desc">Additionne les robots pour faire de 10 à 20 (CP / CE1)</div>
             </div>
         </div>
 
-        <div class="battery-container" id="battery-container">
-            <div class="battery-label" id="battery-label">🔋 TOUR : ALPHA</div>
-            <div class="battery-slots" id="battery-slots">
-                <div class="energy-slot">⚡</div>
-                <div class="energy-slot">⚡</div>
-                <div class="energy-slot">⚡</div>
-                <div class="energy-slot">⚡</div>
-                <div class="energy-slot">⚡</div>
+        <!-- INTERFACE DU JEU PRINCIPAL -->
+        <div id="main-game-ui">
+            <div class="status-bar">
+                <div>🎴 Cartes : <span id="player-cards-count" class="badge">8</span></div>
+                <div>🎯 Coups : <span id="move-count" class="badge">0</span></div>
+                <div style="display: flex; gap: 5px;">
+                    <button class="action-toggle-btn" id="help-btn" onclick="toggleHelp()">💡 Aide : OFF</button>
+                    <button class="action-toggle-btn" id="music-btn" onclick="initAudio(); toggleMusic();" style="background:#ff9ff3;">🎵 Audio : OFF</button>
+                </div>
+            </div>
+
+            <div class="battery-container" id="battery-container">
+                <div class="battery-label" id="battery-label">🔋 TOUR : ALPHA</div>
+                <div class="battery-slots" id="battery-slots">
+                    <div class="energy-slot">⚡</div>
+                    <div class="energy-slot">⚡</div>
+                    <div class="energy-slot">⚡</div>
+                    <div class="energy-slot">⚡</div>
+                    <div class="energy-slot">⚡</div>
+                </div>
+            </div>
+
+            <div id="message-box">Choisis une carte en bas, puis clique sur la case cible !</div>
+
+            <div class="board-container" id="board">
+                <div class="ring-center">
+                    <div class="ring-icon" id="center-icon">💻</div>
+                    <div class="ring-text" id="center-turn-text">STUDIO</div>
+                </div>
+            </div>
+
+            <div class="hand-section">
+                <div class="hand-title">🃏 Tes cartes en main :</div>
+                <div class="cards-container" id="player-hand"></div>
+            </div>
+
+            <div class="controls">
+                <button class="action-btn power-btn" id="power-btn" onclick="usePower()" disabled>⚡ Super Mode</button>
+                <button class="action-btn secondary-btn" onclick="drawAndRemix()">🃏 Piocher</button>
+                <button class="action-btn menu-btn" onclick="returnToMenu()">🏠 Menu</button>
+                <button class="action-btn" onclick="resetGame()">🔄 Recommencer</button>
             </div>
         </div>
 
-        <div id="message-box">Choisis une carte en bas, puis clique sur la case cible !</div>
-
-        <div class="board-container" id="board">
-            <div class="ring-center">
-                <div class="ring-icon">💻</div>
-                <div class="ring-text" id="center-turn-text">STUDIO</div>
-            </div>
-        </div>
-
-        <div class="hand-section">
-            <div class="hand-title">🃏 Tes cartes en main :</div>
-            <div class="cards-container" id="player-hand"></div>
-        </div>
-
-        <div class="controls">
-            <button class="action-btn power-btn" id="power-btn" onclick="usePower()" disabled>⚡ Super Mode</button>
-            <button class="action-btn secondary-btn" onclick="drawAndRemix()">🃏 Piocher & Remuer</button>
-            <button class="action-btn" onclick="resetGame()">🔄 Recommencer</button>
-        </div>
     </div>
 
     <script>
-        // Enregistrement automatique d'un Service Worker via un Blob (permet l'installation PWA en fichier unique sur GitHub Pages)
-        if ('serviceWorker' in navigator) {
-            const swCode = `self.addEventListener('fetch', (event) => { event.respondWith(fetch(event.request).catch(() => caches.match(event.request))); });`;
-            const swBlob = new Blob([swCode], { type: 'text/javascript' });
-            const swUrl = URL.createObjectURL(swBlob);
-            navigator.serviceWorker.register(swUrl).catch((err) => console.log('SW error', err));
-        }
-
+        let currentGameMode = 'mult'; 
         let pawnAlpha = 2;
         let pawnBeta = 5;
         let activeTurn = 'alpha';
-        let score = 0;
+        let moves = 0; // Compteur de coups
         let energyLevel = 0; 
         const MAX_ENERGY = 5;
         let powerMode = 0; 
@@ -461,6 +531,54 @@
         let musicPlaying = false;
         let musicInterval = null;
         const zenNotes = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25];
+
+        // Rétablissement du cercle de 0 à 10 (11 cases au total)
+        for (let i = 0; i <= 10; i++) {
+            const angle = (i / 11) * 2 * Math.PI - Math.PI / 2;
+            const radius = 110; 
+            const x = 145 + radius * Math.cos(angle);
+            const y = 145 + radius * Math.sin(angle);
+
+            const caseEl = document.createElement('div');
+            caseEl.className = 'case';
+            caseEl.style.left = `${x}px`;
+            caseEl.style.top = `${y}px`;
+            caseEl.onclick = () => onCaseClick(i);
+            caseEl.id = `case-${i}`;
+
+            const numEl = document.createElement('span');
+            numEl.className = 'case-number';
+            numEl.innerText = i;
+            caseEl.appendChild(numEl);
+
+            const badgeContainer = document.createElement('div');
+            badgeContainer.className = 'pawn-badge-container';
+            badgeContainer.id = `badges-${i}`;
+            caseEl.appendChild(badgeContainer);
+
+            boardElement.appendChild(caseEl);
+        }
+
+        function startGameMode(mode) {
+            currentGameMode = mode;
+            document.getElementById('mode-select-screen').style.display = 'none';
+            document.getElementById('main-game-ui').style.display = 'flex';
+            
+            if (currentGameMode === 'mult') document.getElementById('center-icon').innerText = '✖️';
+            else document.getElementById('center-icon').innerText = '➕';
+
+            resetGame();
+        }
+
+        function returnToMenu() {
+            stopAmbientMusic();
+            musicPlaying = false;
+            document.getElementById('music-btn').innerText = "🎵 Audio : OFF";
+            document.getElementById('music-btn').style.background = "#ff9ff3";
+            
+            document.getElementById('main-game-ui').style.display = 'none';
+            document.getElementById('mode-select-screen').style.display = 'flex';
+        }
 
         function toggleMusic() {
             initAudio();
@@ -613,32 +731,6 @@
             } catch(e){}
         }
 
-        for (let i = 0; i <= 10; i++) {
-            const angle = (i / 11) * 2 * Math.PI - Math.PI / 2;
-            const radius = 110; 
-            const x = 145 + radius * Math.cos(angle);
-            const y = 145 + radius * Math.sin(angle);
-
-            const caseEl = document.createElement('div');
-            caseEl.className = 'case';
-            caseEl.style.left = `${x}px`;
-            caseEl.style.top = `${y}px`;
-            caseEl.onclick = () => onCaseClick(i);
-            caseEl.id = `case-${i}`;
-
-            const numEl = document.createElement('span');
-            numEl.className = 'case-number';
-            numEl.innerText = i;
-            caseEl.appendChild(numEl);
-
-            const badgeContainer = document.createElement('div');
-            badgeContainer.className = 'pawn-badge-container';
-            badgeContainer.id = `badges-${i}`;
-            caseEl.appendChild(badgeContainer);
-
-            boardElement.appendChild(caseEl);
-        }
-
         function resetGame() {
             pawnAlpha = Math.floor(Math.random() * 4) + 1;
             do {
@@ -646,7 +738,7 @@
             } while (pawnBeta === pawnAlpha);
 
             activeTurn = 'alpha';
-            score = 0;
+            moves = 0;
             energyLevel = 0;
             powerMode = 0;
             step1Alpha = null;
@@ -658,22 +750,30 @@
 
             selectedCardIndex = null;
             updateUI();
-            setMessage("Vide tes 8 cartes pour gagner ! Tour du Robot Alpha 🤖.");
+            setMessage("Vide tes 8 cartes en le moins de coups possible !");
         }
 
         function getRandomCard() {
-            const a = Math.floor(Math.random() * 8) + 2; 
-            const b = Math.floor(Math.random() * 10) + 1; 
-            return a * b;
+            if (currentGameMode === 'mult') {
+                const a = Math.floor(Math.random() * 9) + 2; 
+                const b = Math.floor(Math.random() * 10) + 1; 
+                return a * b;
+            } else if (currentGameMode === 'add10') {
+                return Math.floor(Math.random() * 9) + 2; // Cible de 2 à 10
+            } else {
+                return Math.floor(Math.random() * 11) + 10; // Cible de 10 à 20
+            }
         }
 
         function isCardPlayable(cardVal) {
             for (let tAlpha = 0; tAlpha <= 10; tAlpha++) {
                 for (let tBeta = 0; tBeta <= 10; tBeta++) {
-                    if (tAlpha * tBeta === cardVal) {
-                        if (powerMode > 0 || powerMode === 2 || powerMode === 3) {
-                            return true;
-                        }
+                    let match = false;
+                    if (currentGameMode === 'mult') match = (tAlpha * tBeta === cardVal);
+                    else match = (tAlpha + tBeta === cardVal); // Addition directe pour add10 et add20
+
+                    if (match) {
+                        if (powerMode > 0 || powerMode === 2 || powerMode === 3) return true;
                         if (activeTurn === 'alpha' && tBeta === pawnBeta) return true;
                         if (activeTurn === 'beta' && tAlpha === pawnAlpha) return true;
                     }
@@ -712,17 +812,17 @@
             } else if (powerMode === 3) {
                 let finalAlpha = step1Alpha;
                 let finalBeta = targetValue;
+                
+                let match = false;
+                if (currentGameMode === 'mult') {
+                    match = (finalAlpha * finalBeta === cardVal || targetValue * pawnAlpha === cardVal || step1Alpha * targetValue === cardVal);
+                } else {
+                    match = (finalAlpha + finalBeta === cardVal);
+                }
 
-                if (finalAlpha * finalBeta === cardVal || targetValue * pawnAlpha === cardVal || step1Alpha * targetValue === cardVal) {
-                    if (finalAlpha * finalBeta === cardVal) {
-                        pawnAlpha = finalAlpha;
-                        pawnBeta = finalBeta;
-                    } else if (targetValue * pawnAlpha === cardVal) {
-                        pawnBeta = targetValue;
-                    } else {
-                        pawnAlpha = step1Alpha;
-                        pawnBeta = targetValue;
-                    }
+                if (match) {
+                    pawnAlpha = finalAlpha;
+                    pawnBeta = finalBeta;
                     isValid = true;
                     powerMode = 0;
                 }
@@ -731,24 +831,47 @@
                     powerMode = 2;
                     step1Alpha = null;
                     playSound('fail');
-                    setMessage("Oups ! Cette combinaison ne fait pas " + cardVal + ". Réessaie le double mode.");
+                    setMessage("Oups ! Cette combinaison ne fait pas " + cardVal + ". Réessaie.");
                     updateUI();
                     return;
                 }
             } else if (powerMode === 1) {
-                if (targetValue * pawnBeta === cardVal || pawnAlpha * targetValue === cardVal) {
-                    if (targetValue * pawnBeta === cardVal) pawnAlpha = targetValue;
-                    else pawnBeta = targetValue;
+                let match = false;
+                if (currentGameMode === 'mult') {
+                    match = (targetValue * pawnBeta === cardVal || pawnAlpha * targetValue === cardVal);
+                    if (match) {
+                        if (targetValue * pawnBeta === cardVal) pawnAlpha = targetValue;
+                        else pawnBeta = targetValue;
+                    }
+                } else {
+                    match = (targetValue + pawnBeta === cardVal || pawnAlpha + targetValue === cardVal);
+                    if (match) {
+                        if (targetValue + pawnBeta === cardVal) pawnAlpha = targetValue;
+                        else pawnBeta = targetValue;
+                    }
+                }
+
+                if (match) {
                     isValid = true;
                     powerMode = 0;
                 }
             } else {
-                if (activeTurn === 'alpha' && targetValue * pawnBeta === cardVal) {
-                    pawnAlpha = targetValue;
-                    isValid = true;
-                } else if (activeTurn === 'beta' && pawnAlpha * targetValue === cardVal) {
-                    pawnBeta = targetValue;
-                    isValid = true;
+                if (currentGameMode === 'mult') {
+                    if (activeTurn === 'alpha' && targetValue * pawnBeta === cardVal) {
+                        pawnAlpha = targetValue;
+                        isValid = true;
+                    } else if (activeTurn === 'beta' && pawnAlpha * targetValue === cardVal) {
+                        pawnBeta = targetValue;
+                        isValid = true;
+                    }
+                } else {
+                    if (activeTurn === 'alpha' && targetValue + pawnBeta === cardVal) {
+                        pawnAlpha = targetValue;
+                        isValid = true;
+                    } else if (activeTurn === 'beta' && pawnAlpha + targetValue === cardVal) {
+                        pawnBeta = targetValue;
+                        isValid = true;
+                    }
                 }
             }
 
@@ -757,7 +880,7 @@
                 playerCards.splice(selectedCardIndex, 1);
                 selectedCardIndex = null;
                 
-                score += 10;
+                moves++; // Augmentation du nombre de coups joués
                 energyLevel = Math.min(MAX_ENERGY, energyLevel + 1);
                 if (powerMode === 0) {
                     activeTurn = activeTurn === 'alpha' ? 'beta' : 'alpha';
@@ -766,8 +889,8 @@
                 updateUI();
 
                 if (playerCards.length === 0) {
-                    setMessage("🏆 VICTOIRE ! Tu as programmé tous tes calculs !");
-                    alert("🎉 Incroyable ! Tu es un maître du calcul mental !");
+                    setMessage(`🏆 VICTOIRE ! Partie réussie en seulement ${moves} coups !`);
+                    alert(`🎉 Bravo ! Tu as vidé tes cartes en ${moves} coups !`);
                     resetGame();
                 } else {
                     setMessage(`Super coup ! Il reste ${playerCards.length} cartes.`);
@@ -800,15 +923,19 @@
         function drawAndRemix() {
             initAudio();
             playSound('fail');
+            moves++; // Piocher compte comme 1 coup joué
             
             playerCards.push(getRandomCard());
 
             const targetCard = playerCards[Math.floor(Math.random() * playerCards.length)];
             let validPairs = [];
-            for (let a = 1; a <= 10; a++) {
-                if (targetCard % a === 0) {
-                    let b = targetCard / a;
-                    if (b <= 10) validPairs.push({ a, b });
+            for (let a = 0; a <= 10; a++) {
+                for (let b = 0; b <= 10; b++) {
+                    let match = false;
+                    if (currentGameMode === 'mult') match = (a * b === targetCard);
+                    else match = (a + b === targetCard);
+
+                    if (match) validPairs.push({ a, b });
                 }
             }
 
@@ -821,22 +948,19 @@
             activeTurn = activeTurn === 'alpha' ? 'beta' : 'alpha';
             selectedCardIndex = null;
             updateUI();
-            setMessage("✨ Une carte piochée et les positions ajustées pour être jouables !");
+            setMessage("✨ Une carte piochée et les positions ajustées !");
         }
 
         function updateUI() {
             document.getElementById('player-cards-count').innerText = playerCards.length;
-            document.getElementById('score-count').innerText = score;
+            document.getElementById('move-count').innerText = moves;
 
             const batteryContainer = document.getElementById('battery-container');
             const slots = document.querySelectorAll('.energy-slot');
             
             slots.forEach((slot, idx) => {
-                if (idx < energyLevel) {
-                    slot.classList.add('filled');
-                } else {
-                    slot.classList.remove('filled');
-                }
+                if (idx < energyLevel) slot.classList.add('filled');
+                else slot.classList.remove('filled');
             });
 
             batteryContainer.className = "battery-container";
@@ -851,9 +975,9 @@
             }
 
             document.getElementById('battery-label').innerText = powerMode > 0 ? "⚡ MODE LIBRE" : `🤖 TOUR : ${activeTurn.toUpperCase()}`;
-            document.getElementById('center-turn-text').innerText = powerMode > 0 ? "⚡ LIBRE" : `TOUR ${activeTrustText = activeTurn.toUpperCase()}`; // Corrigé proprement
+            document.getElementById('center-turn-text').innerText = powerMode > 0 ? "⚡ LIBRE" : `TOUR ${activeTurn.toUpperCase()}`;
 
-            for(let i=0; i<=10; i++) {
+            for(let i = 0; i <= 10; i++) {
                 const container = document.getElementById(`badges-${i}`);
                 container.innerHTML = '';
 
@@ -889,8 +1013,6 @@
         function setMessage(text) {
             document.getElementById('message-box').innerText = text;
         }
-
-        resetGame();
     </script>
 </body>
 </html>
