@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Maths Robots - Studio de Calcul</title>
-    
+    <title>Chrono Robots - Calcul Mental Express</title>
+
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Maths Robots">
+    <meta name="apple-mobile-web-app-title" content="Chrono Robots">
     <meta name="theme-color" content="#3742fa">
 
     <link rel="manifest" href="./manifest.json">
@@ -19,7 +19,8 @@
         :root {
             --app-gold: #ffd32a;
             --app-red: #ff3f34;
-            --app-blue: #00d2d3;
+            --app-green: #2ed573;
+            --app-blue: #3742fa;
             --app-dark: #1e272e;
             --bar-bg: #2f3542;
         }
@@ -37,6 +38,33 @@
             box-sizing: border-box;
         }
 
+        .nav-header {
+            width: 100%;
+            max-width: 440px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .switch-game-link {
+            background: rgba(255, 255, 255, 0.95);
+            color: var(--app-dark);
+            text-decoration: none;
+            font-family: 'Fredoka One', cursive;
+            font-size: 0.8rem;
+            padding: 5px 10px;
+            border-radius: 10px;
+            border: 2px solid var(--app-dark);
+            box-shadow: 0 2px 0 var(--app-dark);
+            transition: transform 0.1s;
+        }
+
+        .switch-game-link:active {
+            transform: translateY(2px);
+            box-shadow: none;
+        }
+
         h1 {
             font-family: 'Fredoka One', cursive;
             color: var(--app-gold);
@@ -49,7 +77,7 @@
 
         #game-container {
             width: 100%;
-            max-width: 800px;
+            max-width: 440px;
             background: #fff;
             border: 5px solid var(--app-dark);
             border-radius: 25px;
@@ -63,51 +91,8 @@
             background-size: 18px 18px;
         }
 
-        #mode-select-screen {
+        #game-screen {
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-            padding: 20px 0;
-        }
-
-        .mode-card {
-            width: 100%;
-            max-width: 350px;
-            background: #ffeaa7;
-            border: 4px solid var(--app-dark);
-            border-radius: 18px;
-            padding: 15px;
-            text-align: center;
-            cursor: pointer;
-            box-shadow: 0 6px 0 var(--app-dark);
-            transition: transform 0.1s, background 0.1s;
-        }
-
-        .mode-card:hover {
-            transform: translateY(-4px);
-            background: var(--app-gold);
-        }
-
-        .mode-card:active {
-            transform: translateY(2px);
-            box-shadow: 0 2px 0 var(--app-dark);
-        }
-
-        .mode-title {
-            font-family: 'Fredoka One', cursive;
-            font-size: 1.2rem;
-            color: var(--app-dark);
-            margin-bottom: 5px;
-        }
-
-        .mode-desc {
-            font-size: 0.9rem;
-            color: #485460;
-        }
-
-        #main-game-ui {
-            display: none;
             flex-direction: column;
             gap: 12px;
         }
@@ -117,104 +102,40 @@
             justify-content: space-between;
             align-items: center;
             background: var(--app-dark);
-            padding: 10px 15px;
-            border-radius: 15px;
+            padding: 8px 14px;
+            border-radius: 14px;
             color: white;
-            font-size: 1rem;
+            font-size: 0.95rem;
             box-shadow: inset 0 -4px 0 rgba(0,0,0,0.4);
-            flex-wrap: wrap;
-            gap: 8px;
         }
 
         .badge {
             background: var(--app-gold);
             color: var(--app-dark);
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-family: 'Fredoka One', cursive;
-        }
-
-        .action-toggle-btn {
-            background: #ffa502;
-            color: var(--app-dark);
-            border: 2px solid white;
-            padding: 4px 10px;
+            padding: 3px 9px;
             border-radius: 10px;
-            cursor: pointer;
             font-family: 'Fredoka One', cursive;
-            font-size: 0.85rem;
-            transition: transform 0.1s;
         }
 
-        .action-toggle-btn:active {
-            transform: scale(0.95);
-        }
-
-        .battery-container {
-            background: var(--bar-bg);
-            border: 3px solid var(--app-dark);
-            border-radius: 14px;
-            padding: 6px 15px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 5px 0 var(--app-dark);
-            transition: all 0.3s ease;
-        }
-
-        .battery-container.ready-l1 {
-            border-color: #2ed573;
-            box-shadow: 0 0 10px #2ed573, 0 5px 0 var(--app-dark);
-        }
-
-        .battery-container.ready-l2 {
-            border-color: var(--app-gold);
-            box-shadow: 0 0 15px var(--app-gold), 0 5px 0 var(--app-dark);
-        }
-
-        .battery-label {
-            color: white;
-            font-family: 'Fredoka One', cursive;
-            font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .battery-slots {
-            display: flex;
-            gap: 8px;
-        }
-
-        .energy-slot {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.15);
-            border: 2px dashed rgba(255, 255, 255, 0.4);
+        /* Aire de jeu : Roue centrale + Jauge de temps à droite */
+        .play-area {
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
-        }
-
-        .energy-slot.filled {
-            background: var(--app-gold);
-            border: 2px solid white;
-            box-shadow: 0 0 8px var(--app-gold);
-            transform: scale(1.15);
+            gap: 12px;
+            position: relative;
         }
 
         .board-container {
             position: relative;
             width: 290px;
             height: 290px;
-            margin: 0 auto;
+            margin: 0;
             background: #fff200;
             border-radius: 50%;
-            border: 8px solid #3742fa;
+            border: 8px solid var(--app-blue);
             box-shadow: 0 8px 0 #d2dae2, inset 0 0 15px rgba(0,0,0,0.15);
+            flex-shrink: 0;
         }
 
         .ring-center {
@@ -223,36 +144,41 @@
             left: 50%;
             transform: translate(-50%, -50%);
             text-align: center;
-            background: rgba(255, 255, 255, 0.95);
-            border: 3px solid var(--app-dark);
-            padding: 10px;
+            background: rgba(255, 255, 255, 0.97);
+            border: 4px solid var(--app-dark);
+            padding: 6px;
             border-radius: 50%;
-            width: 95px;
-            height: 95px;
+            width: 124px;
+            height: 124px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+            box-shadow: 0 4px 0 rgba(0,0,0,0.15);
+            z-index: 5;
         }
 
-        .ring-icon {
-            font-size: 1.8rem;
-            line-height: 1;
-        }
-
-        .ring-text {
-            font-size: 0.7rem;
+        .target-label {
+            font-size: 0.65rem;
             font-weight: bold;
-            color: var(--app-dark);
-            margin-top: 2px;
+            color: #718093;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .target-number {
             font-family: 'Fredoka One', cursive;
+            font-size: 1.7rem;
+            color: var(--app-red);
+            line-height: 1.15;
+            text-align: center;
+            word-break: break-word;
         }
 
         .case {
             position: absolute;
-            width: 46px;
-            height: 46px;
+            width: 48px;
+            height: 48px;
             background: #ffffff;
             border: 3px solid var(--app-dark);
             border-radius: 50%;
@@ -261,281 +187,407 @@
             justify-content: center;
             cursor: pointer;
             transform: translate(-50%, -50%);
-            transition: transform 0.15s ease, background 0.15s ease;
+            transition: transform 0.1s ease, background 0.15s ease;
             box-shadow: 0 4px 0 var(--app-dark);
         }
 
         .case-number {
             font-family: 'Fredoka One', cursive;
-            font-size: 1.3rem;
+            font-size: 1.25rem;
             color: var(--app-dark);
-            z-index: 1;
             pointer-events: none;
         }
 
         .case:active {
-            transform: translate(-50%, -47%) scale(0.95);
+            transform: translate(-50%, -47%) scale(0.92);
             box-shadow: 0 1px 0 var(--app-dark);
-        }
-
-        .pawn-badge-container {
-            position: absolute;
-            top: -16px;
-            display: flex;
-            gap: 2px;
-            z-index: 2;
-            pointer-events: none;
-        }
-
-        .pawn-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            border: 2px solid var(--app-dark);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.1rem;
-            box-shadow: 0 3px 0 rgba(0,0,0,0.3);
-            background: white;
-            transition: transform 0.2s;
-        }
-
-        .pawn-avatar.alpha { background: var(--app-red); }
-        .pawn-avatar.beta { background: var(--app-blue); }
-
-        .pawn-avatar.active-blink {
-            animation: robotBounce 0.6s infinite alternate;
-        }
-
-        @keyframes robotBounce {
-            0% { transform: scale(1) translateY(0); }
-            100% { transform: scale(1.35) translateY(-4px); filter: brightness(1.2); }
-        }
-
-        #message-box {
-            text-align: center;
-            background: #7bed9f;
-            color: var(--app-dark);
-            padding: 10px 12px;
-            border-radius: 14px;
-            font-weight: bold;
-            font-size: 0.95rem;
-            border: 3px solid var(--app-dark);
-            box-shadow: 0 4px 0 var(--app-dark);
-            min-height: 24px;
-        }
-
-        .hand-section {
-            background: #ffeaa7;
-            padding: 12px;
-            border-radius: 16px;
-            border: 3px solid var(--app-dark);
-        }
-
-        .hand-title {
-            font-size: 1rem;
-            margin-bottom: 8px;
-            color: var(--app-dark);
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .cards-container {
-            display: flex;
-            gap: 8px;
-            justify-content: center;
-            flex-wrap: wrap;
-            padding: 4px 0;
-            min-height: 75px;
-            align-items: center;
-        }
-
-        .card {
-            width: 50px;
-            height: 72px;
-            background: white;
-            border: 3px solid var(--app-dark);
-            border-radius: 12px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 4px 0 var(--app-dark);
-            transition: all 0.15s ease;
-            position: relative;
-        }
-
-        .card:hover {
-            transform: translateY(-5px) rotate(-2deg);
             background: var(--app-gold);
         }
 
-        .card.selected-card {
-            background: var(--app-red);
-            color: white;
-            transform: translateY(-8px) scale(1.08);
-            border-color: var(--app-dark);
-            box-shadow: 0 6px 0 var(--app-dark);
+        /* Jauge de temps verticale à droite (sans texte) */
+        .timer-bar-container.vertical {
+            width: 20px;
+            height: 290px;
+            background: #dfe4ea;
+            border: 3px solid var(--app-dark);
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 4px 0 var(--app-dark);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            flex-shrink: 0;
         }
 
-        .card.hint-playable {
-            border-color: #2ed573;
-            box-shadow: 0 0 12px #2ed573, 0 4px 0 var(--app-dark);
-            animation: hintPulse 1s infinite alternate;
+        .timer-bar-container.vertical .timer-fill {
+            width: 100%;
+            height: 100%;
+            background: var(--app-green);
+            transition: height 0.2s linear, background-color 0.3s;
         }
 
-        @keyframes hintPulse {
-            0% { transform: scale(1); }
-            100% { transform: scale(1.06); }
+        #feedback-box {
+            text-align: center;
+            background: #7bed9f;
+            color: var(--app-dark);
+            padding: 8px 12px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 0.95rem;
+            border: 3px solid var(--app-dark);
+            box-shadow: 0 3px 0 var(--app-dark);
+            min-height: 22px;
         }
 
-        .card-number {
-            font-family: 'Fredoka One', cursive;
-            font-size: 1.35rem;
-        }
-
-        .controls {
+        .controls-row {
             display: flex;
             gap: 8px;
-            flex-wrap: wrap;
         }
 
         button.action-btn {
             flex: 1;
-            min-width: 110px;
-            background: var(--app-red);
-            color: white;
+            background: #ffa502;
+            color: var(--app-dark);
             border: 3px solid var(--app-dark);
-            padding: 10px;
+            padding: 9px;
             font-family: 'Fredoka One', cursive;
             font-size: 0.9rem;
-            border-radius: 14px;
+            border-radius: 12px;
             cursor: pointer;
             box-shadow: 0 4px 0 var(--app-dark);
-            transition: all 0.1s;
         }
 
-        button.action-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            box-shadow: none;
-            transform: none;
-        }
-
-        button.action-btn:active:not(:disabled) {
+        button.action-btn:active {
             transform: translateY(3px);
             box-shadow: 0 1px 0 var(--app-dark);
         }
 
-        button.power-btn { background: #2ed573; color: var(--app-dark); }
-        button.secondary-btn { background: #3742fa; }
-        button.menu-btn { background: #ffa502; color: var(--app-dark); }
+        #gameover-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
+            padding: 10px 0;
+            text-align: center;
+        }
+
+        .stats-box {
+            background: #f1f2f6;
+            border: 3px solid var(--app-dark);
+            border-radius: 15px;
+            padding: 15px;
+            width: 100%;
+            box-sizing: border-box;
+            font-size: 1.05rem;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .start-btn {
+            background: var(--app-red);
+            color: white;
+            border: 4px solid var(--app-dark);
+            border-radius: 16px;
+            padding: 14px;
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.3rem;
+            cursor: pointer;
+            box-shadow: 0 6px 0 var(--app-dark);
+            text-align: center;
+            width: 100%;
+            box-sizing: border-box;
+            transition: transform 0.1s;
+        }
+
+        .start-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 var(--app-dark);
+        }
     </style>
 </head>
 <body>
 
-    <h1>🤖 MATHS ROBOTS ⚡</h1>
+<div class="nav-header">
+    <span style="font-size:0.85rem; color:#fff; font-weight:bold;">🤖 CE2 / CM1 / CM2</span>
+    <a href="./complements_10_20.html" class="switch-game-link">🎯 Compléments CP/CE1 ➜</a>
+</div>
 
-    <div id="game-container">
-        
-        <!-- ÉCRAN DE SÉLECTION DU MODE -->
-        <div id="mode-select-screen">
-            <div style="font-family: 'Fredoka One', cursive; font-size: 1.2rem; color: var(--app-dark); text-align: center; margin-top: 5px;">
-                Choisis ton mode de jeu :
-            </div>
-            
-            <div class="mode-card" onclick="startGameMode('mult')">
-                <div class="mode-title">✖️ Tables de Multiplication</div>
-                <div class="mode-desc">Multiplie la position des deux robots (CM1)</div>
-            </div>
+<h1>🤖 CHRONO ROBOTS ⚡</h1>
 
-            <div class="mode-card" onclick="startGameMode('add10')" style="background: #7bed9f;">
-                <div class="mode-title">➕ Compléments à 10</div>
-                <div class="mode-desc">Additionne les robots pour faire de 2 à 10 (CP)</div>
-            </div>
+<div id="game-container">
 
-            <div class="mode-card" onclick="startGameMode('add20')" style="background: #70a1ff;">
-                <div class="mode-title">➕ Compléments à 20</div>
-                <div class="mode-desc">Additionne les robots pour faire de 10 à 20 (CP / CE1)</div>
-            </div>
+    <!-- ÉCRAN DE JEU (DIRECTEMENT ACTIF) -->
+    <div id="game-screen">
+        <div class="status-bar">
+            <div>✅ Réussite : <span id="score-success" class="badge">0</span></div>
+            <div>❌ Erreurs : <span id="score-fail" class="badge" style="background:#ff3f34; color:white;">0</span></div>
         </div>
 
-        <!-- INTERFACE DU JEU PRINCIPAL -->
-        <div id="main-game-ui">
-            <div class="status-bar">
-                <div>🎴 Cartes : <span id="player-cards-count" class="badge">8</span></div>
-                <div>🎯 Coups : <span id="move-count" class="badge">0</span></div>
-                <div style="display: flex; gap: 5px;">
-                    <button class="action-toggle-btn" id="help-btn" onclick="toggleHelp()">💡 Aide : OFF</button>
-                    <button class="action-toggle-btn" id="music-btn" onclick="initAudio(); toggleMusic();" style="background:#ff9ff3;">🎵 Audio : OFF</button>
-                </div>
-            </div>
-
-            <div class="battery-container" id="battery-container">
-                <div class="battery-label" id="battery-label">🔋 TOUR : ALPHA</div>
-                <div class="battery-slots" id="battery-slots">
-                    <div class="energy-slot">⚡</div>
-                    <div class="energy-slot">⚡</div>
-                    <div class="energy-slot">⚡</div>
-                    <div class="energy-slot">⚡</div>
-                    <div class="energy-slot">⚡</div>
-                </div>
-            </div>
-
-            <div id="message-box">Choisis une carte en bas, puis clique sur la case cible !</div>
-
+        <!-- ZONE DE JEU AVEC LA ROUE ET LA JAUGE VERTICALE ÉPURÉE À DROITE -->
+        <div class="play-area">
             <div class="board-container" id="board">
                 <div class="ring-center">
-                    <div class="ring-icon" id="center-icon">💻</div>
-                    <div class="ring-text" id="center-turn-text">STUDIO</div>
+                    <div class="target-label" id="target-label">CALCUL</div>
+                    <div class="target-number" id="target-num">--</div>
                 </div>
             </div>
 
-            <div class="hand-section">
-                <div class="hand-title">🃏 Tes cartes en main :</div>
-                <div class="cards-container" id="player-hand"></div>
-            </div>
-
-            <div class="controls">
-                <button class="action-btn power-btn" id="power-btn" onclick="usePower()" disabled>⚡ Super Mode</button>
-                <button class="action-btn secondary-btn" onclick="drawAndRemix()">🃏 Piocher</button>
-                <button class="action-btn menu-btn" onclick="returnToMenu()">🏠 Menu</button>
-                <button class="action-btn" onclick="resetGame()">🔄 Recommencer</button>
+            <div class="timer-bar-container vertical">
+                <div class="timer-fill" id="timer-fill"></div>
             </div>
         </div>
 
+        <!-- CONSIGNE & FEEDBACK SOUS LA ROUE -->
+        <div id="feedback-box">Trouve le bon résultat sur le cercle !</div>
+
+        <div class="controls-row">
+            <button class="action-btn" onclick="toggleMusic();" id="music-btn" style="background:#ff9ff3;">🎵 Audio : OFF</button>
+            <button class="action-btn" onclick="restartGame()">🔄 Recommencer</button>
+        </div>
     </div>
 
-    <script>
-        let currentGameMode = 'mult'; 
-        let pawnAlpha = 2;
-        let pawnBeta = 5;
-        let activeTurn = 'alpha';
-        let moves = 0; // Compteur de coups
-        let energyLevel = 0; 
-        const MAX_ENERGY = 5;
-        let powerMode = 0; 
-        let step1Alpha = null;
-        let helpMode = false;
+    <!-- ÉCRAN DE FIN -->
+    <div id="gameover-screen">
+        <div style="font-family: 'Fredoka One', cursive; font-size: 1.6rem; color: var(--app-red);">⏱️ TEMPS ÉCOULÉ !</div>
 
-        let playerCards = [];
-        let selectedCardIndex = null;
+        <div class="stats-box">
+            <div>✅ Calculs réussis : <strong id="end-success" style="color:var(--app-green); font-size:1.3rem;">0</strong></div>
+            <div>❌ Calculs ratés : <strong id="end-fail" style="color:var(--app-red); font-size:1.3rem;">0</strong></div>
+            <div style="margin-top:4px;">🎯 Précision : <strong id="end-precision" style="color:var(--app-blue); font-size:1.2rem;">0%</strong></div>
+        </div>
 
-        const boardElement = document.getElementById('board');
-        let audioCtx = null;
+        <button class="start-btn" onclick="restartGame()">🚀 REJOUER</button>
+    </div>
 
-        let musicPlaying = false;
-        let musicInterval = null;
-        const zenNotes = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25];
+</div>
 
-        // Rétablissement du cercle de 0 à 10 (11 cases au total)
-        for (let i = 0; i <= 10; i++) {
-            const angle = (i / 11) * 2 * Math.PI - Math.PI / 2;
-            const radius = 110; 
+<script>
+    // Configuration du tempo et du temps (dynamique tendue)
+    const INITIAL_TIME = 35; // 35 secondes au départ
+    const TIME_BONUS = 3;    // +3s par bonne réponse
+    const TIME_PENALTY = 5;  // -5s par erreur
+
+    let timeLeft = INITIAL_TIME;
+    let timerInterval = null;
+    let nextQuestionTimeout = null;
+    let isTransitioning = false; // Empêche les double-clics pendant la transition
+
+    let targetAnswer = null;
+
+    let successCount = 0;
+    let failCount = 0;
+    let questionCounter = 0; // Compteur pour l'alternance rythmée
+    let lastTableUsed = null; // Évite d'interroger la même table deux fois de suite
+
+    // Decks dynamiques assurant une couverture complète de toutes les tables sans angle mort
+    let easyDeck = [];
+    let hardDeck = [];
+
+    const boardElement = document.getElementById('board');
+    const targetLabelElement = document.getElementById('target-label');
+    const targetNumElement = document.getElementById('target-num');
+
+    let audioCtx = null;
+    let musicPlaying = false;
+    let musicInterval = null;
+    const zenNotes = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25];
+
+    // --- BANQUE DE QUESTIONS STRATIFIÉES SELON LA DIFFICULTÉ COGNITIVE ---
+
+    // 1. Panier Difficile : la "zone rouge" (les tables 6, 7, 8, 9 et leurs pièges standards)
+    const BASE_HARD_PAIRS = [
+        [7, 8], [8, 7], // 56 (le n°1 des erreurs)
+        [6, 8], [8, 6], // 48
+        [6, 7], [7, 6], // 42
+        [7, 9], [9, 7], // 63
+        [8, 9], [9, 8], // 72
+        [6, 9], [9, 6], // 54
+        [8, 8],         // 64
+        [7, 7],         // 49
+        [4, 7], [7, 4], // 28
+        [4, 8], [8, 4], // 32
+        [9, 9]          // 81
+    ];
+
+    // Pièges fréquents dans la zone 40-75 (interférences classiques)
+    const CRITICAL_PRODUCTS = [28, 32, 36, 42, 45, 48, 49, 54, 56, 63, 64, 72, 81];
+
+    // 2. Panier Respiration & Échauffement : couverture équilibrée des tables 2, 3, 4, 5 et carrés
+    const BASE_EASY_PAIRS = [
+        // Table de 2
+        [2, 3], [2, 4], [2, 6], [2, 7], [2, 8], [2, 9],
+        // Table de 3
+        [3, 3], [3, 4], [3, 5], [3, 6], [3, 7], [3, 8], [3, 9],
+        // Table de 4
+        [4, 3], [4, 4], [4, 5], [4, 6], [4, 9],
+        // Table de 5
+        [5, 3], [5, 4], [5, 5], [5, 6], [5, 7], [5, 8], [5, 9],
+        // Table de 9 modérée & carré de 6
+        [9, 2], [9, 3], [9, 4], [9, 5],
+        [6, 6]
+    ];
+
+    /**
+     * Algorithme Fisher-Yates (Knuth shuffle)
+     */
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    /**
+     * Initialise ou renouvelle un deck équilibré
+     */
+    function refillDeck(deckType) {
+        if (deckType === 'hard') {
+            return shuffleArray([...BASE_HARD_PAIRS]);
+        } else {
+            return shuffleArray([...BASE_EASY_PAIRS]);
+        }
+    }
+
+    /**
+     * Tire une paire depuis un deck sans répétition immédiate de la même table
+     */
+    function drawFromDeck(isHard) {
+        let deck = isHard ? hardDeck : easyDeck;
+        if (!deck || deck.length === 0) {
+            deck = refillDeck(isHard ? 'hard' : 'easy');
+            if (isHard) hardDeck = deck; else easyDeck = deck;
+        }
+
+        // Recherche d'une paire qui ne répète pas la table précédente si possible
+        let selectedIndex = 0;
+        if (lastTableUsed !== null && deck.length > 1) {
+            for (let i = 0; i < deck.length; i++) {
+                if (deck[i][0] !== lastTableUsed && deck[i][1] !== lastTableUsed) {
+                    selectedIndex = i;
+                    break;
+                }
+            }
+        }
+
+        const chosenPair = deck.splice(selectedIndex, 1)[0];
+        lastTableUsed = chosenPair[0];
+        return chosenPair;
+    }
+
+    /**
+     * Génère un problème selon une alternance rythmée :
+     * Tour pair : Respiration / Échauffement (Tables 2, 3, 4, 5, 9)
+     * Tour impair : Challenge (Zone rouge critique : 6, 7, 8, 9)
+     */
+    function generateQuestion() {
+        const isHard = (questionCounter % 2 === 1);
+        const chosenPair = drawFromDeck(isHard);
+
+        const factorA = chosenPair[0];
+        const factorB = chosenPair[1];
+        const product = factorA * factorB;
+
+        // Choix du format de problème :
+        // 0: Produit direct (ex: "7 × 8" -> chercher 56)
+        // 1: Facteur gauche manquant (ex: "? × 8 = 56" -> chercher 7)
+        // 2: Facteur droit manquant (ex: "7 × ? = 56" -> chercher 8)
+        const type = Math.floor(Math.random() * 3);
+
+        let questionText = '';
+        let answer = null;
+        let distractors = [];
+
+        if (type === 0) {
+            // Recherche du produit direct
+            targetLabelElement.textContent = isHard ? "🔥 DÉFI" : "CALCUL";
+            questionText = `${factorA} × ${factorB}`;
+            answer = product;
+
+            const trapCandidates = new Set();
+
+            if (isHard) {
+                // Dans la zone difficile, injecter en priorité les produits sources de confusions avérées
+                CRITICAL_PRODUCTS.forEach(p => {
+                    if (p !== product) trapCandidates.add(p);
+                });
+            }
+
+            // Distracteurs structurels proches (voisins de table ±factorA, ±factorB, inversions ±1, ±2, ±10)
+            const offsets = [
+                factorA, -factorA, factorB, -factorB,
+                factorA * 2, -factorA * 2,
+                1, -1, 2, -2, 10, -10
+            ];
+            for (const offset of offsets) {
+                const trap = product + offset;
+                if (trap > 0 && trap !== product) trapCandidates.add(trap);
+            }
+
+            // Remplissage si besoin avec des produits crédibles
+            while (trapCandidates.size < 9) {
+                const randomP = (Math.floor(Math.random() * 8) + 2) * (Math.floor(Math.random() * 8) + 2);
+                if (randomP !== product) trapCandidates.add(randomP);
+            }
+
+            const traps = Array.from(trapCandidates);
+            shuffleArray(traps);
+            distractors = traps.slice(0, 9);
+
+        } else if (type === 1) {
+            // Recherche du premier facteur (? × B = P)
+            targetLabelElement.textContent = isHard ? "🔥 TROUVE ?" : "TROUVE ?";
+            questionText = `? × ${factorB} = ${product}`;
+            answer = factorA;
+
+            const trapCandidates = [];
+            for (let n = 1; n <= 12; n++) {
+                if (n !== answer) trapCandidates.push(n);
+            }
+            shuffleArray(trapCandidates);
+            distractors = trapCandidates.slice(0, 9);
+
+        } else {
+            // Recherche du second facteur (A × ? = P)
+            targetLabelElement.textContent = isHard ? "🔥 TROUVE ?" : "TROUVE ?";
+            questionText = `${factorA} × ? = ${product}`;
+            answer = factorB;
+
+            const trapCandidates = [];
+            for (let n = 1; n <= 12; n++) {
+                if (n !== answer) trapCandidates.push(n);
+            }
+            shuffleArray(trapCandidates);
+            distractors = trapCandidates.slice(0, 9);
+        }
+
+        const boardNumbers = shuffleArray([answer, ...distractors]);
+        return { questionText, answer, boardNumbers, isHard };
+    }
+
+    function buildBoard(questionText, numbersList) {
+        targetNumElement.textContent = questionText;
+
+        // Ajuster dynamiquement la taille selon la longueur de l'opération
+        if (questionText.length > 7) {
+            targetNumElement.style.fontSize = "1.25rem";
+        } else if (questionText.length > 4) {
+            targetNumElement.style.fontSize = "1.5rem";
+        } else {
+            targetNumElement.style.fontSize = "1.75rem";
+        }
+
+        // Nettoyage des anciennes cases du plateau
+        const existingCases = boardElement.querySelectorAll('.case');
+        existingCases.forEach(el => el.remove());
+
+        // Placement circulaire harmonieux des 10 cases
+        const total = numbersList.length;
+        numbersList.forEach((num, index) => {
+            const angle = (index / total) * 2 * Math.PI - Math.PI / 2;
+            const radius = 110;
             const x = 145 + radius * Math.cos(angle);
             const y = 145 + radius * Math.sin(angle);
 
@@ -543,476 +595,249 @@
             caseEl.className = 'case';
             caseEl.style.left = `${x}px`;
             caseEl.style.top = `${y}px`;
-            caseEl.onclick = () => onCaseClick(i);
-            caseEl.id = `case-${i}`;
+            caseEl.onclick = () => handleCaseClick(num);
 
             const numEl = document.createElement('span');
             numEl.className = 'case-number';
-            numEl.innerText = i;
+            numEl.textContent = num;
             caseEl.appendChild(numEl);
 
-            const badgeContainer = document.createElement('div');
-            badgeContainer.className = 'pawn-badge-container';
-            badgeContainer.id = `badges-${i}`;
-            caseEl.appendChild(badgeContainer);
-
             boardElement.appendChild(caseEl);
-        }
+        });
+    }
 
-        function startGameMode(mode) {
-            currentGameMode = mode;
-            document.getElementById('mode-select-screen').style.display = 'none';
-            document.getElementById('main-game-ui').style.display = 'flex';
-            
-            if (currentGameMode === 'mult') document.getElementById('center-icon').innerText = '✖️';
-            else document.getElementById('center-icon').innerText = '➕';
+    function nextQuestion() {
+        isTransitioning = false;
+        const q = generateQuestion();
+        targetAnswer = q.answer;
 
-            resetGame();
-        }
+        const feedbackEl = document.getElementById('feedback-box');
+        feedbackEl.textContent = q.isHard ? "⚡ Attention calcul piège !" : "Trouve le bon résultat sur le cercle !";
+        feedbackEl.style.background = q.isHard ? "#ffeaa7" : "#7bed9f";
 
-        function returnToMenu() {
-            stopAmbientMusic();
-            musicPlaying = false;
-            document.getElementById('music-btn').innerText = "🎵 Audio : OFF";
-            document.getElementById('music-btn').style.background = "#ff9ff3";
-            
-            document.getElementById('main-game-ui').style.display = 'none';
-            document.getElementById('mode-select-screen').style.display = 'flex';
-        }
+        buildBoard(q.questionText, q.boardNumbers);
+    }
 
-        function toggleMusic() {
-            initAudio();
-            musicPlaying = !musicPlaying;
-            const btn = document.getElementById('music-btn');
+    function handleCaseClick(clickedNum) {
+        if (isTransitioning) return;
 
-            if (musicPlaying) {
-                btn.innerText = "🎵 Audio : ON";
-                btn.style.background = "#2ed573";
-                startAmbientMusic();
-            } else {
-                btn.innerText = "🎵 Audio : OFF";
-                btn.style.background = "#ff9ff3";
-                stopAmbientMusic();
-            }
-        }
+        if (clickedNum === targetAnswer) {
+            isTransitioning = true;
+            playSound('success');
+            successCount++;
+            questionCounter++;
+            timeLeft += TIME_BONUS;
+            document.getElementById('feedback-box').textContent = `🎉 Bravo ! +${TIME_BONUS}s !`;
+            document.getElementById('feedback-box').style.background = "#2ed573";
 
-        function toggleHelp() {
-            helpMode = !helpMode;
-            const btn = document.getElementById('help-btn');
-            if (helpMode) {
-                btn.innerText = "💡 Aide : ON";
-                btn.style.background = "#2ed573";
-                setMessage("💡 Mode Aide activé : regarde les cartes qui scintillent !");
-            } else {
-                btn.innerText = "💡 Aide : OFF";
-                btn.style.background = "#ffa502";
-                setMessage("💡 Mode Aide désactivé.");
-            }
-            updateUI();
-        }
-
-        function startAmbientMusic() {
-            if (musicInterval) clearInterval(musicInterval);
-            
-            musicInterval = setInterval(() => {
-                if (!musicPlaying || !audioCtx) return;
-                try {
-                    const now = audioCtx.currentTime;
-                    const randNote = zenNotes[Math.floor(Math.random() * zenNotes.length)];
-                    
-                    const osc = audioCtx.createOscillator();
-                    const gain = audioCtx.createGain();
-                    
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(randNote, now);
-                    
-                    gain.gain.setValueAtTime(0.001, now);
-                    gain.gain.linearRampToValueAtTime(0.04, now + 0.8);
-                    gain.gain.exponentialRampToValueAtTime(0.0001, now + 2.4);
-                    
-                    osc.connect(gain);
-                    gain.connect(audioCtx.destination);
-                    
-                    osc.start(now);
-                    osc.stop(now + 2.5);
-                } catch(e){}
-            }, 2500);
-        }
-
-        function stopAmbientMusic() {
-            if (musicInterval) {
-                clearInterval(musicInterval);
-                musicInterval = null;
-            }
-        }
-
-        function initAudio() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-        }
-
-        function playSound(type) {
-            try {
-                initAudio();
-                const now = audioCtx.currentTime;
-
-                if (type === 'select') {
-                    const osc = audioCtx.createOscillator();
-                    const gain = audioCtx.createGain();
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(523.25, now);
-                    osc.frequency.exponentialRampToValueAtTime(1046.50, now + 0.08);
-                    gain.gain.setValueAtTime(0.12, now);
-                    gain.gain.linearRampToValueAtTime(0.01, now + 0.08);
-                    osc.connect(gain);
-                    gain.connect(audioCtx.destination);
-                    osc.start(now);
-                    osc.stop(now + 0.08);
-
-                } else if (type === 'success') {
-                    const notes = [523.25, 659.25, 783.99, 1046.50];
-                    notes.forEach((freq, idx) => {
-                        const osc = audioCtx.createOscillator();
-                        const gain = audioCtx.createGain();
-                        osc.type = 'triangle';
-                        osc.frequency.setValueAtTime(freq, now + (idx * 0.06));
-                        gain.gain.setValueAtTime(0.15, now + (idx * 0.06));
-                        gain.gain.exponentialRampToValueAtTime(0.01, now + (idx * 0.06) + 0.15);
-                        osc.connect(gain);
-                        gain.connect(audioCtx.destination);
-                        osc.start(now + (idx * 0.06));
-                        osc.stop(now + (idx * 0.06) + 0.15);
-                    });
-
-                    const bass = audioCtx.createOscillator();
-                    const bassGain = audioCtx.createGain();
-                    bass.type = 'sine';
-                    bass.frequency.setValueAtTime(150, now + 0.2);
-                    bass.frequency.exponentialRampToValueAtTime(40, now + 0.45);
-                    bassGain.gain.setValueAtTime(0.2, now + 0.2);
-                    bassGain.gain.linearRampToValueAtTime(0.01, now + 0.45);
-                    bass.connect(bassGain);
-                    bassGain.connect(audioCtx.destination);
-                    bass.start(now + 0.2);
-                    bass.stop(now + 0.45);
-
-                } else if (type === 'fail') {
-                    const osc = audioCtx.createOscillator();
-                    const gain = audioCtx.createGain();
-                    osc.type = 'sawtooth';
-                    osc.frequency.setValueAtTime(300, now);
-                    osc.frequency.exponentialRampToValueAtTime(80, now + 0.35);
-                    gain.gain.setValueAtTime(0.15, now);
-                    gain.gain.linearRampToValueAtTime(0.01, now + 0.35);
-                    osc.connect(gain);
-                    gain.connect(audioCtx.destination);
-                    osc.start(now);
-                    osc.stop(now + 0.35);
-
-                } else if (type === 'power') {
-                    const freqs = [440, 554.37, 659.25, 880, 1046.50];
-                    freqs.forEach((f, i) => {
-                        const osc = audioCtx.createOscillator();
-                        const gain = audioCtx.createGain();
-                        osc.type = 'square';
-                        osc.frequency.setValueAtTime(f, now + (i * 0.07));
-                        gain.gain.setValueAtTime(0.1, now + (i * 0.07));
-                        gain.gain.linearRampToValueAtTime(0.01, now + (i * 0.07) + 0.18);
-                        osc.connect(gain);
-                        gain.connect(audioCtx.destination);
-                        osc.start(now + (i * 0.07));
-                        osc.stop(now + (i * 0.07) + 0.18);
-                    });
-                }
-            } catch(e){}
-        }
-
-        function resetGame() {
-            pawnAlpha = Math.floor(Math.random() * 4) + 1;
-            do {
-                pawnBeta = Math.floor(Math.random() * 5) + 5;
-            } while (pawnBeta === pawnAlpha);
-
-            activeTurn = 'alpha';
-            moves = 0;
-            energyLevel = 0;
-            powerMode = 0;
-            step1Alpha = null;
-            playerCards = [];
-
-            for(let i = 0; i < 8; i++) {
-                playerCards.push(getRandomCard());
-            }
-
-            selectedCardIndex = null;
-            updateUI();
-            setMessage("Vide tes 8 cartes en le moins de coups possible !");
-        }
-
-        function getRandomCard() {
-            if (currentGameMode === 'mult') {
-                const a = Math.floor(Math.random() * 9) + 2; 
-                const b = Math.floor(Math.random() * 10) + 1; 
-                return a * b;
-            } else if (currentGameMode === 'add10') {
-                return Math.floor(Math.random() * 9) + 2; // Cible de 2 à 10
-            } else {
-                return Math.floor(Math.random() * 11) + 10; // Cible de 10 à 20
-            }
-        }
-
-        function isCardPlayable(cardVal) {
-            for (let tAlpha = 0; tAlpha <= 10; tAlpha++) {
-                for (let tBeta = 0; tBeta <= 10; tBeta++) {
-                    let match = false;
-                    if (currentGameMode === 'mult') match = (tAlpha * tBeta === cardVal);
-                    else match = (tAlpha + tBeta === cardVal); // Addition directe pour add10 et add20
-
-                    if (match) {
-                        if (powerMode > 0 || powerMode === 2 || powerMode === 3) return true;
-                        if (activeTurn === 'alpha' && tBeta === pawnBeta) return true;
-                        if (activeTurn === 'beta' && tAlpha === pawnAlpha) return true;
-                    }
-                }
-            }
-            return false;
-        }
-
-        function selectCard(index) {
-            initAudio();
-            selectedCardIndex = index;
-            playSound('select');
-            updateUI();
-            const cardVal = playerCards[index];
-            setMessage(`Carte ${cardVal} choisie. Clique sur la case cible !`);
-        }
-
-        function onCaseClick(targetValue) {
-            initAudio();
-            if (selectedCardIndex === null) {
-                setMessage("⚠️ Choisis d'abord une carte en bas !");
-                return;
-            }
-
-            const cardVal = playerCards[selectedCardIndex];
-            let isValid = false;
-
-            if (powerMode === 2) {
-                step1Alpha = targetValue;
-                pawnAlpha = targetValue;
-                powerMode = 3; 
-                playSound('select');
-                setMessage("🔥 Double Mode : Premier robot placé ! Clique sur la case du second robot.");
-                updateUI();
-                return;
-            } else if (powerMode === 3) {
-                let finalAlpha = step1Alpha;
-                let finalBeta = targetValue;
-                
-                let match = false;
-                if (currentGameMode === 'mult') {
-                    match = (finalAlpha * finalBeta === cardVal || targetValue * pawnAlpha === cardVal || step1Alpha * targetValue === cardVal);
-                } else {
-                    match = (finalAlpha + finalBeta === cardVal);
-                }
-
-                if (match) {
-                    pawnAlpha = finalAlpha;
-                    pawnBeta = finalBeta;
-                    isValid = true;
-                    powerMode = 0;
-                }
-                
-                if (!isValid) {
-                    powerMode = 2;
-                    step1Alpha = null;
-                    playSound('fail');
-                    setMessage("Oups ! Cette combinaison ne fait pas " + cardVal + ". Réessaie.");
-                    updateUI();
-                    return;
-                }
-            } else if (powerMode === 1) {
-                let match = false;
-                if (currentGameMode === 'mult') {
-                    match = (targetValue * pawnBeta === cardVal || pawnAlpha * targetValue === cardVal);
-                    if (match) {
-                        if (targetValue * pawnBeta === cardVal) pawnAlpha = targetValue;
-                        else pawnBeta = targetValue;
-                    }
-                } else {
-                    match = (targetValue + pawnBeta === cardVal || pawnAlpha + targetValue === cardVal);
-                    if (match) {
-                        if (targetValue + pawnBeta === cardVal) pawnAlpha = targetValue;
-                        else pawnBeta = targetValue;
-                    }
-                }
-
-                if (match) {
-                    isValid = true;
-                    powerMode = 0;
-                }
-            } else {
-                if (currentGameMode === 'mult') {
-                    if (activeTurn === 'alpha' && targetValue * pawnBeta === cardVal) {
-                        pawnAlpha = targetValue;
-                        isValid = true;
-                    } else if (activeTurn === 'beta' && pawnAlpha * targetValue === cardVal) {
-                        pawnBeta = targetValue;
-                        isValid = true;
-                    }
-                } else {
-                    if (activeTurn === 'alpha' && targetValue + pawnBeta === cardVal) {
-                        pawnAlpha = targetValue;
-                        isValid = true;
-                    } else if (activeTurn === 'beta' && pawnAlpha + targetValue === cardVal) {
-                        pawnBeta = targetValue;
-                        isValid = true;
-                    }
-                }
-            }
-
-            if (isValid) {
-                playSound('success');
-                playerCards.splice(selectedCardIndex, 1);
-                selectedCardIndex = null;
-                
-                moves++; // Augmentation du nombre de coups joués
-                energyLevel = Math.min(MAX_ENERGY, energyLevel + 1);
-                if (powerMode === 0) {
-                    activeTurn = activeTurn === 'alpha' ? 'beta' : 'alpha';
-                }
-
-                updateUI();
-
-                if (playerCards.length === 0) {
-                    setMessage(`🏆 VICTOIRE ! Partie réussie en seulement ${moves} coups !`);
-                    alert(`🎉 Bravo ! Tu as vidé tes cartes en ${moves} coups !`);
-                    resetGame();
-                } else {
-                    setMessage(`Super coup ! Il reste ${playerCards.length} cartes.`);
-                }
-            } else {
-                playSound('fail');
-                setMessage("Oups ! Ce calcul ne correspond pas avec la carte sélectionnée. Réessaie !");
-            }
-        }
-
-        function usePower() {
-            initAudio();
-            if (energyLevel < 3) return;
-            
-            playSound('power');
-            
-            if (energyLevel >= 5) {
-                energyLevel = 0;
-                powerMode = 2;
-                step1Alpha = null;
-                setMessage("🔥 DOUBLE MODE ACTIF ! Clique sur la case du premier robot.");
-            } else if (energyLevel >= 3) {
-                energyLevel -= 3;
-                powerMode = 1;
-                setMessage("⚡ SUPER MODE ACTIF ! Déplace le robot de ton choix librement !");
-            }
-            updateUI();
-        }
-
-        function drawAndRemix() {
-            initAudio();
+            nextQuestionTimeout = setTimeout(nextQuestion, 260);
+        } else {
             playSound('fail');
-            moves++; // Piocher compte comme 1 coup joué
-            
-            playerCards.push(getRandomCard());
+            failCount++;
+            timeLeft = Math.max(0, timeLeft - TIME_PENALTY);
+            document.getElementById('feedback-box').textContent = `❌ Oups ! -${TIME_PENALTY}s !`;
+            document.getElementById('feedback-box').style.background = "#ff3f34";
 
-            const targetCard = playerCards[Math.floor(Math.random() * playerCards.length)];
-            let validPairs = [];
-            for (let a = 0; a <= 10; a++) {
-                for (let b = 0; b <= 10; b++) {
-                    let match = false;
-                    if (currentGameMode === 'mult') match = (a * b === targetCard);
-                    else match = (a + b === targetCard);
-
-                    if (match) validPairs.push({ a, b });
-                }
+            if (timeLeft <= 0) {
+                endGame();
             }
+        }
+        updateScoreDisplay();
+        updateTimerDisplay();
+    }
 
-            if (validPairs.length > 0) {
-                const pair = validPairs[Math.floor(Math.random() * validPairs.length)];
-                pawnAlpha = pair.a;
-                pawnBeta = pair.b;
-            }
+    function updateScoreDisplay() {
+        document.getElementById('score-success').textContent = successCount;
+        document.getElementById('score-fail').textContent = failCount;
+    }
 
-            activeTurn = activeTurn === 'alpha' ? 'beta' : 'alpha';
-            selectedCardIndex = null;
-            updateUI();
-            setMessage("✨ Une carte piochée et les positions ajustées !");
+    function updateTimerDisplay() {
+        const fill = document.getElementById('timer-fill');
+        const percent = Math.max(0, Math.min(100, (timeLeft / INITIAL_TIME) * 100));
+
+        fill.style.height = percent + '%';
+
+        if (timeLeft <= 10) {
+            fill.style.background = '#ff3f34';
+        } else if (timeLeft <= 20) {
+            fill.style.background = '#ffa502';
+        } else {
+            fill.style.background = '#2ed573';
+        }
+    }
+
+    /**
+     * Réinitialisation complète et propre de tous les états du jeu
+     */
+    function resetGameState() {
+        // Arrêt des timers et timeouts en vol
+        if (timerInterval) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+        }
+        if (nextQuestionTimeout) {
+            clearTimeout(nextQuestionTimeout);
+            nextQuestionTimeout = null;
         }
 
-        function updateUI() {
-            document.getElementById('player-cards-count').innerText = playerCards.length;
-            document.getElementById('move-count').innerText = moves;
+        // Remise à zéro des compteurs et états de jeu
+        isTransitioning = false;
+        successCount = 0;
+        failCount = 0;
+        questionCounter = 0;
+        lastTableUsed = null;
+        timeLeft = INITIAL_TIME;
 
-            const batteryContainer = document.getElementById('battery-container');
-            const slots = document.querySelectorAll('.energy-slot');
-            
-            slots.forEach((slot, idx) => {
-                if (idx < energyLevel) slot.classList.add('filled');
-                else slot.classList.remove('filled');
-            });
+        // Régénération complète des pioches de cartes
+        easyDeck = refillDeck('easy');
+        hardDeck = refillDeck('hard');
 
-            batteryContainer.className = "battery-container";
-            if (energyLevel >= 5) batteryContainer.classList.add('ready-l2');
-            else if (energyLevel >= 3) batteryContainer.classList.add('ready-l1');
+        // Réinitialisation de l'affichage
+        updateScoreDisplay();
+        updateTimerDisplay();
+        document.getElementById('feedback-box').textContent = "Trouve le bon résultat sur le cercle !";
+        document.getElementById('feedback-box').style.background = "#7bed9f";
+    }
 
-            document.getElementById('power-btn').disabled = (energyLevel < 3);
-            if (energyLevel >= 5) {
-                document.getElementById('power-btn').innerText = "🔥 Double Mode (Niv 2)";
-            } else {
-                document.getElementById('power-btn').innerText = "⚡ Super Mode (Niv 1)";
+    function startGame() {
+        initAudio();
+        resetGameState();
+
+        document.getElementById('gameover-screen').style.display = 'none';
+        document.getElementById('game-screen').style.display = 'flex';
+
+        nextQuestion();
+
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            updateTimerDisplay();
+
+            if (timeLeft <= 0) {
+                endGame();
             }
+        }, 1000);
+    }
 
-            document.getElementById('battery-label').innerText = powerMode > 0 ? "⚡ MODE LIBRE" : `🤖 TOUR : ${activeTurn.toUpperCase()}`;
-            document.getElementById('center-turn-text').innerText = powerMode > 0 ? "⚡ LIBRE" : `TOUR ${activeTurn.toUpperCase()}`;
+    function restartGame() {
+        startGame();
+    }
 
-            for(let i = 0; i <= 10; i++) {
-                const container = document.getElementById(`badges-${i}`);
-                container.innerHTML = '';
+    function endGame() {
+        if (timerInterval) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+        }
+        if (nextQuestionTimeout) {
+            clearTimeout(nextQuestionTimeout);
+            nextQuestionTimeout = null;
+        }
+        isTransitioning = false;
 
-                if (i === pawnAlpha) {
-                    const avatarA = document.createElement('div');
-                    avatarA.className = `pawn-avatar alpha ${(activeTurn === 'alpha' || powerMode > 0) ? 'active-blink' : ''}`;
-                    avatarA.innerText = '🤖';
-                    container.appendChild(avatarA);
-                }
-                if (i === pawnBeta) {
-                    const avatarB = document.createElement('div');
-                    avatarB.className = `pawn-avatar beta ${(activeTurn === 'beta' || powerMode > 0) ? 'active-blink' : ''}`;
-                    avatarB.innerText = '👾';
-                    container.appendChild(avatarB);
-                }
+        playSound('fail');
+        document.getElementById('game-screen').style.display = 'none';
+        document.getElementById('gameover-screen').style.display = 'flex';
+
+        document.getElementById('end-success').textContent = successCount;
+        document.getElementById('end-fail').textContent = failCount;
+
+        const totalAttempts = successCount + failCount;
+        const precision = totalAttempts > 0 ? Math.round((successCount / totalAttempts) * 100) : 0;
+        document.getElementById('end-precision').textContent = precision + '%';
+    }
+
+    function toggleMusic() {
+        initAudio();
+        musicPlaying = !musicPlaying;
+        const btn = document.getElementById('music-btn');
+
+        if (musicPlaying) {
+            btn.innerText = "🎵 Audio : ON";
+            btn.style.background = "#2ed573";
+            startAmbientMusic();
+        } else {
+            btn.innerText = "🎵 Audio : OFF";
+            btn.style.background = "#ff9ff3";
+            stopAmbientMusic();
+        }
+    }
+
+    function startAmbientMusic() {
+        if (musicInterval) clearInterval(musicInterval);
+        musicInterval = setInterval(() => {
+            if (!musicPlaying || !audioCtx) return;
+            try {
+                const now = audioCtx.currentTime;
+                const randNote = zenNotes[Math.floor(Math.random() * zenNotes.length)];
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(randNote, now);
+                gain.gain.setValueAtTime(0.001, now);
+                gain.gain.linearRampToValueAtTime(0.03, now + 0.8);
+                gain.gain.exponentialRampToValueAtTime(0.0001, now + 2.2);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 2.3);
+            } catch(e){}
+        }, 2500);
+    }
+
+    function stopAmbientMusic() {
+        if (musicInterval) {
+            clearInterval(musicInterval);
+            musicInterval = null;
+        }
+    }
+
+    function initAudio() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+    }
+
+    function playSound(type) {
+        try {
+            if (!audioCtx) initAudio();
+            const now = audioCtx.currentTime;
+
+            if (type === 'success') {
+                const notes = [523.25, 659.25, 783.99, 1046.50];
+                notes.forEach((freq, idx) => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(freq, now + (idx * 0.05));
+                    gain.gain.setValueAtTime(0.12, now + (idx * 0.05));
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + (idx * 0.05) + 0.12);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now + (idx * 0.05));
+                    osc.stop(now + (idx * 0.05) + 0.12);
+                });
+            } else if (type === 'fail') {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(250, now);
+                osc.frequency.exponentialRampToValueAtTime(80, now + 0.3);
+                gain.gain.setValueAtTime(0.12, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.3);
             }
+        } catch(e){}
+    }
 
-            const handContainer = document.getElementById('player-hand');
-            handContainer.innerHTML = '';
-            playerCards.forEach((cardVal, idx) => {
-                const cardEl = document.createElement('div');
-                
-                let isPlayable = isCardPlayable(cardVal);
-                let hintClass = (helpMode && isPlayable) ? 'hint-playable' : '';
-
-                cardEl.className = `card ${selectedCardIndex === idx ? 'selected-card' : ''} ${hintClass}`;
-                cardEl.innerHTML = `<div class="card-number">${cardVal}</div>`;
-                cardEl.onclick = () => selectCard(idx);
-                handContainer.appendChild(cardEl);
-            });
-        }
-
-        function setMessage(text) {
-            document.getElementById('message-box').innerText = text;
-        }
-    </script>
+    // Démarrage instantané dès le chargement de la page
+    window.addEventListener('DOMContentLoaded', startGame);
+</script>
 </body>
 </html>
