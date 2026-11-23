@@ -2,7 +2,7 @@
   "name": "Les Bulles Prioritaires - Maths CM1",
   "short_name": "Bulles Maths",
   "description": "Jeu éducatif tactile pour apprendre à placer les parenthèses dans un calcul mathématique (niveau CM1).",
-  "start_url": "./les_bulles_prioritaires.html",
+  "start_url": "./bulle_priorite.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "landscape",
