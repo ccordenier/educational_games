@@ -1,1 +1,2037 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Les Bulles Prioritaires — Atelier Maths CM1</title>
+  <link rel="manifest" href="./manifest_bulle_priorite.json">
 
+  <style>
+    /* ==========================================================================
+       STYLES GLOBAUX & INTERFACE TACTILE (ADAPTÉE TABLETTE & ORDINATEUR)
+       ========================================================================== */
+    :root {
+      --bg-cream: #FFFDF7;
+      --bg-grid: #F3EFE2;
+      --primary: #3B82F6;
+      --primary-dark: #2563EB;
+      --accent: #F59E0B;
+      --accent-dark: #D97706;
+      --bubble-purple: #8B5CF6;
+      --bubble-bg: rgba(139, 92, 246, 0.14);
+      --success: #10B981;
+      --success-dark: #059669;
+      --soft-red: #F43F5E;
+      --text-main: #1E293B;
+      --text-muted: #64748B;
+      --card-bg: #FFFFFF;
+      --shadow-soft: 0 10px 25px -5px rgba(30, 41, 59, 0.08), 0 4px 10px -2px rgba(30, 41, 59, 0.04);
+      --radius-lg: 24px;
+      --radius-md: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: var(--bg-cream);
+      background-image:
+        radial-gradient(var(--bg-grid) 1.5px, transparent 1.5px),
+        radial-gradient(var(--bg-grid) 1.5px, var(--bg-cream) 1.5px);
+      background-size: 32px 32px;
+      background-position: 0 0, 16px 16px;
+      font-family: 'Segoe UI', 'Rounded Mplus 1c', 'Nunito', 'Comic Sans MS', system-ui, -apple-system, sans-serif;
+      color: var(--text-main);
+    }
+
+    /* Conteneur principal pleine hauteur flexible */
+    .app-shell {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      height: 100%;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 12px 16px 16px 16px;
+      gap: 10px;
+    }
+
+    /* ==========================================================================
+       EN-TÊTE : PROGRESSION, ÉTOILES & BOUTONS OUTILS
+       ========================================================================== */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--card-bg);
+      padding: 10px 18px;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-soft);
+      border: 2px solid #F1F5F9;
+      flex-wrap: wrap;
+      gap: 10px;
+      z-index: 10;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .level-badge {
+      background: linear-gradient(135deg, #6366F1, #8B5CF6);
+      color: white;
+      font-weight: 800;
+      font-size: 1.05rem;
+      padding: 8px 16px;
+      border-radius: 999px;
+      box-shadow: 0 4px 10px rgba(139, 92, 246, 0.3);
+      white-space: nowrap;
+    }
+
+    .progress-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 120px;
+    }
+
+    .progress-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .progress-track {
+      width: 140px;
+      height: 10px;
+      background: #E2E8F0;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 25%;
+      background: linear-gradient(90deg, #10B981, #34D399);
+      border-radius: 999px;
+      transition: width 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .stats-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .stat-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 800;
+      font-size: 0.98rem;
+      padding: 6px 13px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    .stars-counter {
+      background: #FEF3C7;
+      border: 2px solid #FDE68A;
+      color: #B45309;
+    }
+
+    .streak-counter {
+      background: #FFEDD5;
+      border: 2px solid #FED7AA;
+      color: #C2410C;
+    }
+
+    .timer-pill {
+      background: #F1F5F9;
+      border: 2px solid #E2E8F0;
+      color: #475569;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .tool-buttons {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-tool {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: #F8FAFC;
+      border: 2px solid #E2E8F0;
+      color: var(--text-main);
+      font-weight: 700;
+      font-size: 0.95rem;
+      padding: 9px 14px;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: transform 0.12s ease, background 0.15s ease, border-color 0.15s ease;
+      box-shadow: 0 3px 0 #CBD5E1;
+    }
+
+    .btn-tool:hover:not(:disabled) {
+      background: #F1F5F9;
+      border-color: #CBD5E1;
+    }
+
+    .btn-tool:active:not(:disabled) {
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 #CBD5E1;
+    }
+
+    .btn-tool:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .btn-hint {
+      background: #FFFBEB;
+      border-color: #FCD34D;
+      color: #B45309;
+      box-shadow: 0 3px 0 #F59E0B;
+    }
+
+    .btn-hint:hover:not(:disabled) {
+      background: #FEF3C7;
+    }
+
+    /* ==========================================================================
+       BANDEAU OBJECTIF & CONSIGNE
+       ========================================================================== */
+    .mission-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--card-bg);
+      padding: 12px 22px;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-soft);
+      border: 2px solid #E0E7FF;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .mission-text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .mission-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .mission-sub {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .target-pill {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(135deg, #EFF6FF, #DBEAFE);
+      border: 3px solid #60A5FA;
+      padding: 8px 22px;
+      border-radius: 999px;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+    }
+
+    .target-label {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #1D4ED8;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .target-number {
+      font-size: 2rem;
+      font-weight: 900;
+      color: #1E3A8A;
+      line-height: 1;
+      min-width: 42px;
+      text-align: center;
+    }
+
+    /* ==========================================================================
+       ZONE CENTRALE CANVAS INTERACTIF
+       ========================================================================== */
+    .canvas-stage {
+      position: relative;
+      flex: 1;
+      width: 100%;
+      min-height: 250px;
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-soft);
+      border: 3px solid #E2E8F0;
+      overflow: hidden;
+      touch-action: none; /* Indispensable pour le glisser-déposer fluide sur tablette */
+    }
+
+    canvas#gameCanvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      touch-action: none;
+    }
+
+    /* ==========================================================================
+       ZONE BASSE : MESSAGE PÉDAGOGIQUE & BOUTON D'ACTION PRINCIPAL
+       ========================================================================== */
+    .bottom-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      background: var(--card-bg);
+      padding: 12px 20px;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-soft);
+      border: 2px solid #F1F5F9;
+      flex-wrap: wrap;
+    }
+
+    .feedback-box {
+      flex: 1;
+      min-width: 240px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 16px;
+      border-radius: var(--radius-md);
+      background: #F8FAFC;
+      border: 2px solid #E2E8F0;
+      transition: all 0.25s ease;
+    }
+
+    .feedback-box.info {
+      background: #F0F9FF;
+      border-color: #BAE6FD;
+      color: #0369A1;
+    }
+
+    .feedback-box.success {
+      background: #ECFDF5;
+      border-color: #6EE7B7;
+      color: #065F46;
+    }
+
+    .feedback-box.warning {
+      background: #FFF1F2;
+      border-color: #FECDD3;
+      color: #9F1239;
+    }
+
+    .feedback-icon {
+      font-size: 1.6rem;
+      flex-shrink: 0;
+    }
+
+    .feedback-content {
+      font-size: 0.98rem;
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
+    .action-buttons {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-primary-action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: linear-gradient(180deg, #10B981 0%, #059669 100%);
+      color: white;
+      border: none;
+      font-size: 1.15rem;
+      font-weight: 900;
+      padding: 15px 28px;
+      border-radius: 18px;
+      cursor: pointer;
+      box-shadow: 0 6px 0 #047857, 0 10px 20px rgba(16, 185, 129, 0.3);
+      transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .btn-primary-action:hover:not(:disabled) {
+      filter: brightness(1.05);
+    }
+
+    .btn-primary-action:active:not(:disabled) {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #047857, 0 4px 10px rgba(16, 185, 129, 0.25);
+    }
+
+    .btn-primary-action:disabled {
+      background: #94A3B8;
+      box-shadow: 0 5px 0 #64748B;
+      cursor: not-allowed;
+    }
+
+    .btn-next-level {
+      background: linear-gradient(180deg, #3B82F6 0%, #2563EB 100%);
+      box-shadow: 0 6px 0 #1D4ED8, 0 10px 20px rgba(59, 130, 246, 0.32);
+    }
+
+    .btn-next-level:active:not(:disabled) {
+      box-shadow: 0 2px 0 #1D4ED8;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes popUp {
+      from { transform: scale(0.82); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    /* Ajustements responsives pour petits écrans / tablettes portrait */
+    @media (max-width: 760px) {
+      .app-shell {
+        padding: 8px 10px 10px 10px;
+        gap: 8px;
+      }
+      .top-bar {
+        padding: 8px 12px;
+      }
+      .progress-wrapper {
+        display: none;
+      }
+      .mission-banner {
+        padding: 10px 14px;
+      }
+      .target-number {
+        font-size: 1.65rem;
+      }
+      .btn-primary-action {
+        width: 100%;
+        padding: 13px 20px;
+        font-size: 1.05rem;
+      }
+      .action-buttons {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-shell">
+    <!-- EN-TÊTE -->
+    <header class="top-bar">
+      <div class="brand-group">
+        <div class="level-badge" id="tierBadge">Palier 1 • Découverte</div>
+        <div class="progress-wrapper">
+          <span class="progress-label" id="masteryLabel">Maîtrise : 25%</span>
+          <div class="progress-track">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stats-group">
+        <div class="stat-pill stars-counter" title="Étoiles gagnées">
+          <span>⭐</span>
+          <span id="starsCount">0</span>
+        </div>
+        <div class="stat-pill streak-counter" title="Série de réussites d'affilée">
+          <span>🔥</span>
+          <span id="streakCount">0</span>
+        </div>
+        <div class="stat-pill timer-pill" title="Temps de réflexion sur ce calcul">
+          <span>⏱️</span>
+          <span id="timerDisplay">0s</span>
+        </div>
+      </div>
+
+      <div class="tool-buttons">
+        <button type="button" class="btn-tool btn-hint" id="btnHint" title="Afficher un indice">
+          💡 Indice
+        </button>
+        <button type="button" class="btn-tool" id="btnReset" title="Replacer les parenthèses au départ">
+          ↺ Replacer
+        </button>
+        <button type="button" class="btn-tool" id="btnSkip" title="Générer un autre calcul de ce palier">
+          🎲 Nouveau calcul
+        </button>
+        <button type="button" class="btn-tool" id="btnMute" title="Activer ou couper les sons">
+          🔊
+        </button>
+      </div>
+    </header>
+
+    <!-- BANDEAU OBJECTIF -->
+    <section class="mission-banner">
+      <div class="mission-text">
+        <div class="mission-title" id="missionTitle">Place la bulle prioritaire au bon endroit !</div>
+        <div class="mission-sub" id="missionSub">Glisse les poignées violettes ( et ) autour de l’opération à faire en premier.</div>
+      </div>
+      <div class="target-pill">
+        <span class="target-label">Objectif :</span>
+        <span class="target-number" id="targetDisplay">20</span>
+      </div>
+    </section>
+
+    <!-- ZONE DE JEU INTERACTIVE CANVAS -->
+    <main class="canvas-stage" id="canvasContainer">
+      <canvas id="gameCanvas"></canvas>
+    </main>
+
+    <!-- BARRE D'ACTION ET RETOUR PÉDAGOGIQUE -->
+    <footer class="bottom-controls">
+      <div class="feedback-box info" id="feedbackBox">
+        <span class="feedback-icon" id="feedbackIcon">🫧</span>
+        <div class="feedback-content" id="feedbackText">
+          Déplace les parenthèses violettes pour enfermer l’opération qui doit passer en premier.
+        </div>
+      </div>
+
+      <div class="action-buttons">
+        <button type="button" class="btn-primary-action" id="btnRun">
+          ▶ Lancer le calcul !
+        </button>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    /**
+     * ============================================================================
+     * MOTEUR DU JEU ÉDUCATIF : "LES BULLES PRIORITAIRES" (GÉNÉRATEUR & DDA CM1)
+     * Architecture :
+     *  1. SoundFX : Synthétiseur Web Audio API doux (sans fichiers externes)
+     *  2. MathEvaluator & ProceduralGenerator : Génération infinie + filtrage CM1
+     *  3. AdaptiveDifficultyEngine (DDA) : Ajustement dynamique selon temps & essais
+     *  4. AnimationStateMachine : Évaluation pas-à-pas avec fusion visuelle des jetons
+     *  5. CanvasRenderer & PointerController : Rendu 60fps tactile & souris
+     * ============================================================================
+     */
+
+    // --------------------------------------------------------------------------
+    // 1. SYNTHÉTISEUR AUDIO DOUX (WEB AUDIO API)
+    // --------------------------------------------------------------------------
+    class SoundFX {
+      constructor() {
+        this.ctx = null;
+        this.muted = false;
+      }
+
+      ensureContext() {
+        if (!this.ctx && !this.muted) {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          if (AudioCtx) {
+            this.ctx = new AudioCtx();
+          }
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume().catch(() => {});
+        }
+      }
+
+      playTone(freq, type = 'sine', duration = 0.14, gainPeak = 0.12, delay = 0) {
+        if (this.muted) return;
+        try {
+          this.ensureContext();
+          if (!this.ctx) return;
+          const now = this.ctx.currentTime + delay;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, now);
+
+          gain.gain.setValueAtTime(0.001, now);
+          gain.gain.exponentialRampToValueAtTime(gainPeak, now + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now);
+          osc.stop(now + duration + 0.02);
+        } catch (e) {
+          // Ignore les restrictions audio éventuelles
+        }
+      }
+
+      playSnap() {
+        this.playTone(520, 'sine', 0.09, 0.11);
+        this.playTone(740, 'triangle', 0.08, 0.07, 0.03);
+      }
+
+      playMerge() {
+        this.playTone(440, 'sine', 0.18, 0.12, 0);
+        this.playTone(660, 'sine', 0.22, 0.12, 0.07);
+      }
+
+      playWin() {
+        const notes = [523.25, 659.25, 783.99, 1046.50];
+        notes.forEach((n, idx) => {
+          this.playTone(n, 'triangle', 0.26, 0.14, idx * 0.09);
+        });
+      }
+
+      playTierUp() {
+        const notes = [523.25, 659.25, 783.99, 1046.50, 1318.51];
+        notes.forEach((n, idx) => {
+          this.playTone(n, 'sine', 0.28, 0.15, idx * 0.08);
+        });
+      }
+
+      playTryAgain() {
+        this.playTone(392, 'sine', 0.18, 0.10, 0);
+        this.playTone(330, 'sine', 0.24, 0.10, 0.12);
+      }
+    }
+
+    const sfx = new SoundFX();
+
+    // --------------------------------------------------------------------------
+    // 2. MOTEUR D'ÉVALUATION & GÉNÉRATEUR PROCÉDURAL MATHÉMATIQUE (CM1)
+    // --------------------------------------------------------------------------
+    const TIER_CONFIGS = {
+      1: {
+        tier: 1,
+        name: 'Découverte',
+        badge: 'Palier 1 • Découverte',
+        title: 'Palier 1 : Fais passer l’opération dans la bulle !',
+        subtitle: 'Place les parenthèses autour de l’addition ou de la soustraction pour atteindre l’objectif.'
+      },
+      2: {
+        tier: 2,
+        name: 'Consolidation',
+        badge: 'Palier 2 • Consolidation',
+        title: 'Palier 2 : Attention à l’ordre des opérations !',
+        subtitle: 'Observe bien les signes + , - et × : la bulle change complètement le résultat !'
+      },
+      3: {
+        tier: 3,
+        name: 'Explorateur',
+        badge: 'Palier 3 • Explorateur',
+        title: 'Palier 3 : Défi à 4 nombres !',
+        subtitle: 'Tu peux entourer 2 ou 3 nombres dans la bulle violette pour atteindre la cible.'
+      },
+      4: {
+        tier: 4,
+        name: 'Expert CM1',
+        badge: 'Palier 4 • Expert CM1',
+        title: 'Palier 4 : Maître des priorités !',
+        subtitle: 'Soustractions en cascade et multiplications : trouve le groupement exact.'
+      }
+    };
+
+    /**
+     * Évalue une liste de jetons [n0, op0, n1, op1, ...] avec une paire de parenthèses
+     * encadrant les nombres d'indices [openSlot .. closeSlot] (ou null si sans parenthèses).
+     * Retourne { valid: boolean, value: number, steps: Array }.
+     * Rejette tout calcul générant un résultat négatif à n'importe quelle étape (règle CM1).
+     */
+    function simulateExpression(rawTokens, openSlot, closeSlot) {
+      let numCounter = 0;
+      const mapped = rawTokens.map((val, idx) => {
+        const isNum = typeof val === 'number';
+        const nIdx = isNum ? numCounter++ : -1;
+        return { uid: idx, type: isNum ? 'num' : 'op', numIndex: nIdx, value: val };
+      });
+
+      let openTokIdx = -1;
+      let closeTokIdx = -1;
+      if (openSlot !== null && closeSlot !== null) {
+        openTokIdx = mapped.findIndex(t => t.type === 'num' && t.numIndex === openSlot);
+        closeTokIdx = mapped.findIndex(t => t.type === 'num' && t.numIndex === closeSlot);
+      }
+
+      let working = mapped.map((t, idx) => ({
+        uid: t.uid,
+        type: t.type,
+        value: t.value,
+        inParen: openTokIdx !== -1 && idx >= openTokIdx && idx <= closeTokIdx
+      }));
+
+      const steps = [];
+      let nextUid = 100;
+
+      while (working.length > 1) {
+        const parenOpIndices = [];
+        for (let i = 1; i < working.length - 1; i += 2) {
+          if (working[i].inParen && working[i - 1].inParen && working[i + 1].inParen) {
+            parenOpIndices.push(i);
+          }
+        }
+
+        let chosenOpIdx = -1;
+        let isInsideParen = false;
+
+        if (parenOpIndices.length > 0) {
+          isInsideParen = true;
+          const multIdx = parenOpIndices.find(idx => working[idx].value === '×');
+          chosenOpIdx = multIdx !== undefined ? multIdx : parenOpIndices[0];
+        } else {
+          isInsideParen = false;
+          for (let i = 1; i < working.length - 1; i += 2) {
+            if (working[i].value === '×') {
+              chosenOpIdx = i;
+              break;
+            }
+          }
+          if (chosenOpIdx === -1) {
+            chosenOpIdx = 1;
+          }
+        }
+
+        const leftOperand = working[chosenOpIdx - 1];
+        const operator = working[chosenOpIdx];
+        const rightOperand = working[chosenOpIdx + 1];
+
+        let resultVal = 0;
+        if (operator.value === '+') resultVal = leftOperand.value + rightOperand.value;
+        else if (operator.value === '-') resultVal = leftOperand.value - rightOperand.value;
+        else if (operator.value === '×') resultVal = leftOperand.value * rightOperand.value;
+
+        // Garde-fou pédagogique CM1 : aucun nombre négatif intermédiaire ou final
+        if (resultVal < 0) {
+          return { valid: false, value: resultVal, steps: [] };
+        }
+
+        const explanation = isInsideParen
+          ? `Priorité à la bulle : ${leftOperand.value} ${operator.value} ${rightOperand.value} = ${resultVal}`
+          : `Ensuite on calcule : ${leftOperand.value} ${operator.value} ${rightOperand.value} = ${resultVal}`;
+
+        const newToken = {
+          uid: nextUid++,
+          type: 'num',
+          value: resultVal,
+          inParen: isInsideParen
+        };
+
+        steps.push({
+          leftUid: leftOperand.uid,
+          opUid: operator.uid,
+          rightUid: rightOperand.uid,
+          resultValue: resultVal,
+          newUid: newToken.uid,
+          isInsideParen,
+          explanation
+        });
+
+        working.splice(chosenOpIdx - 1, 3, newToken);
+      }
+
+      return {
+        valid: true,
+        value: working[0].value,
+        steps
+      };
+    }
+
+    function randInt(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function pickRandom(arr) {
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    /**
+     * Générateur procédural de défis mathématiques adaptés au palier (1 à 4).
+     * Garantit que :
+     *  - Aucun calcul (avec ou sans parenthèses) ne produit de nombre négatif.
+     *  - Le résultat final reste dans une plage adaptée au CM1 (<= 100).
+     *  - Les parenthèses sont véritablement nécessaires (cible != résultat sans parenthèses).
+     *  - Il existe une configuration non triviale (n'englobant pas tout le calcul).
+     */
+    function generateProceduralChallenge(tier, previousSignature = '') {
+      const maxResult = tier === 1 ? 50 : tier === 2 ? 75 : 100;
+
+      for (let attempt = 0; attempt < 250; attempt++) {
+        let rawTokens = [];
+        const numCount = tier <= 2 ? 3 : 4;
+
+        if (tier === 1) {
+          // Palier 1 : 3 nombres (2..6), un '+' ou '-' et un '×'
+          const multFirst = Math.random() < 0.5;
+          const addOrSub = Math.random() < 0.65 ? '+' : '-';
+          const a = randInt(2, 6);
+          const b = randInt(2, 6);
+          const c = randInt(2, 6);
+          if (multFirst) {
+            rawTokens = [a, '×', b, addOrSub, c];
+          } else {
+            rawTokens = [a, addOrSub, b, '×', c];
+          }
+        } else if (tier === 2) {
+          // Palier 2 : 3 nombres jusqu'à 12, incluant pièges de soustraction (a - (b - c)) ou mélanges +, -, ×
+          const pattern = pickRandom(['SUB_TRAP', 'MIX_MULT', 'SUB_MULT']);
+          if (pattern === 'SUB_TRAP') {
+            const c = randInt(2, 6);
+            const b = randInt(c + 2, c + 7);
+            const a = randInt(b + 2, 16);
+            rawTokens = [a, '-', b, '-', c];
+          } else if (pattern === 'MIX_MULT') {
+            const a = randInt(2, 9);
+            const b = randInt(2, 8);
+            const c = randInt(2, 7);
+            const op1 = pickRandom(['+', '-']);
+            rawTokens = Math.random() < 0.5 ? [a, op1, b, '×', c] : [a, '×', b, op1, c];
+          } else {
+            const a = randInt(4, 12);
+            const b = randInt(2, 8);
+            const c = randInt(2, 6);
+            rawTokens = [a, '-', b, '×', c];
+          }
+        } else if (tier === 3) {
+          // Palier 3 : 4 nombres, 3 opérateurs variés
+          const pattern = pickRandom(['DOUBLE_MULT', 'ADD_MULT_SUB', 'MULT_ADD_ADD']);
+          if (pattern === 'DOUBLE_MULT') {
+            rawTokens = [randInt(2, 6), '×', randInt(2, 5), '+', randInt(2, 5), '×', randInt(2, 5)];
+          } else if (pattern === 'ADD_MULT_SUB') {
+            rawTokens = [randInt(3, 9), '+', randInt(2, 7), '×', randInt(2, 6), '-', randInt(2, 6)];
+          } else {
+            rawTokens = [randInt(2, 6), '×', randInt(2, 6), '+', randInt(2, 6), '-', randInt(1, 5)];
+          }
+        } else {
+          // Palier 4 : 4 nombres avec soustractions en cascade et multiplications
+          const pattern = pickRandom(['CASCADE_SUB', 'MULT_SUB_SUB', 'SUB_MULT_SUB']);
+          if (pattern === 'CASCADE_SUB') {
+            const d = randInt(2, 5);
+            const c = randInt(d + 2, d + 6);
+            const b = randInt(c + 2, c + 7);
+            const a = randInt(b + 3, 22);
+            rawTokens = [a, '-', b, '-', c, '+', d];
+          } else if (pattern === 'MULT_SUB_SUB') {
+            rawTokens = [randInt(4, 9), '×', randInt(3, 7), '-', randInt(3, 8), '-', randInt(2, 6)];
+          } else {
+            rawTokens = [randInt(12, 20), '-', randInt(2, 5), '×', randInt(2, 4), '-', randInt(1, 5)];
+          }
+        }
+
+        const signature = rawTokens.join(' ');
+        if (signature === previousSignature) continue;
+
+        // Évaluation sans parenthèses
+        const noParenEval = simulateExpression(rawTokens, null, null);
+        if (!noParenEval.valid) continue;
+
+        // Tester toutes les paires de parenthèses valides (n'englobant pas tout le calcul)
+        const candidates = [];
+        for (let o = 0; o < numCount - 1; o++) {
+          for (let c = o + 1; c < numCount; c++) {
+            // Exclure la parenthèse globale (0 .. numCount - 1) qui est triviale
+            if (o === 0 && c === numCount - 1) continue;
+
+            const res = simulateExpression(rawTokens, o, c);
+            if (!res.valid) continue;
+            if (res.value < 1 || res.value > maxResult) continue;
+
+            // La parenthèse doit réellement changer le résultat par rapport au calcul sans parenthèses
+            if (res.value !== noParenEval.value) {
+              candidates.push({ open: o, close: c, target: res.value });
+            }
+          }
+        }
+
+        if (candidates.length === 0) continue;
+
+        // Privilégier les cibles ayant le moins de solutions possibles (idealement unique)
+        const targetFreq = {};
+        candidates.forEach(cand => {
+          targetFreq[cand.target] = (targetFreq[cand.target] || 0) + 1;
+        });
+
+        candidates.sort((a, b) => targetFreq[a.target] - targetFreq[b.target]);
+        const bestCand = candidates[0];
+
+        // Choisir une position de départ différente de la solution pour inviter l'enfant à manipuler
+        let defaultOpen = 0;
+        let defaultClose = numCount - 1;
+        if (defaultOpen === bestCand.open && defaultClose === bestCand.close) {
+          defaultOpen = 0;
+          defaultClose = 1;
+        }
+
+        // Construire le texte d'indice pédagogique dynamique
+        const hintSlice = rawTokens.slice(bestCand.open * 2, bestCand.close * 2 + 1).join(' ');
+        const hintEval = simulateExpression(
+          rawTokens.slice(bestCand.open * 2, bestCand.close * 2 + 1),
+          null,
+          null
+        );
+        const hintResultText = hintEval.valid ? ` (qui donne ${hintEval.value})` : '';
+
+        return {
+          tier,
+          signature,
+          tokens: rawTokens,
+          target: bestCand.target,
+          defaultOpen,
+          defaultClose,
+          hintOpen: bestCand.open,
+          hintClose: bestCand.close,
+          hintText: `Indice : Place la bulle violette autour de « ${hintSlice} »${hintResultText} pour la faire calculer en premier !`
+        };
+      }
+
+      // Secours garanti en cas d'échec statistique rarissime
+      return {
+        tier: 1,
+        signature: '2 + 3 × 4',
+        tokens: [2, '+', 3, '×', 4],
+        target: 20,
+        defaultOpen: 0,
+        defaultClose: 2,
+        hintOpen: 0,
+        hintClose: 1,
+        hintText: 'Indice : Entoure « 2 + 3 » pour calculer 5 en premier !'
+      };
+    }
+
+    // --------------------------------------------------------------------------
+    // 3. MOTEUR DE DIFFICULTÉ ADAPTATIVE (DDA - TEMPS & PRÉCISION)
+    // --------------------------------------------------------------------------
+    const dda = {
+      currentTier: 1,
+      masteryScore: 25, // 0 à 100 (25 = début palier 1, 50 = palier 2, 75 = palier 3, 100 = palier 4)
+      streak: 0,
+      solvedCount: 0,
+      lastSignature: '',
+
+      /**
+       * Ajuste la maîtrise et le palier après un défi réussi.
+       * @param {number} elapsedSec - Temps actif de réflexion (hors animation)
+       * @param {number} attempts - Nombre d'essais sur ce calcul (1 = du premier coup)
+       * @param {boolean} usedHint - Si l'enfant a utilisé le bouton Indice
+       * @returns {{ tierChanged: number, speedBadge: string, starsEarned: number }}
+       */
+      recordSuccess(elapsedSec, attempts, usedHint) {
+        this.solvedCount++;
+        const previousTier = this.currentTier;
+        let delta = 0;
+        let speedBadge = '';
+        let starsEarned = 1;
+
+        if (attempts === 1 && !usedHint && elapsedSec <= 12) {
+          // Réussite éclair et précise -> forte progression
+          delta = 14;
+          this.streak++;
+          starsEarned = 3;
+          speedBadge = `⚡ Éclair (${Math.round(elapsedSec)}s) !`;
+        } else if (attempts === 1 && !usedHint && elapsedSec <= 25) {
+          // Réussite réfléchie -> progression régulière
+          delta = 9;
+          this.streak++;
+          starsEarned = 3;
+          speedBadge = `🧠 Bien réfléchi (${Math.round(elapsedSec)}s) !`;
+        } else if (!usedHint && attempts <= 2) {
+          // Réussite posée ou 2ème essai -> consolidation douce
+          delta = 4;
+          this.streak++;
+          starsEarned = 2;
+          speedBadge = `🐢 Posé et réussi (${Math.round(elapsedSec)}s) !`;
+        } else {
+          // Réussite avec indice ou plusieurs essais -> maintien en zone de confort
+          delta = -3;
+          this.streak = 0;
+          starsEarned = 1;
+          speedBadge = `✨ Réussi avec persévérance !`;
+        }
+
+        this.masteryScore = Math.max(10, Math.min(100, this.masteryScore + delta));
+
+        // Conversion du score de maîtrise en Palier (1 à 4) avec hystérésis pour éviter les oscillations
+        if (this.masteryScore >= 80) this.currentTier = 4;
+        else if (this.masteryScore >= 56) this.currentTier = 3;
+        else if (this.masteryScore >= 34) this.currentTier = 2;
+        else this.currentTier = 1;
+
+        return {
+          tierChanged: this.currentTier - previousTier,
+          speedBadge,
+          starsEarned
+        };
+      },
+
+      recordRepeatedStruggle() {
+        // Si l'enfant échoue plusieurs fois sur le même calcul, on adoucit légèrement la maîtrise
+        this.streak = 0;
+        this.masteryScore = Math.max(10, this.masteryScore - 4);
+        if (this.masteryScore < 30 && this.currentTier > 1) {
+          this.currentTier--;
+        }
+      }
+    };
+
+    // --------------------------------------------------------------------------
+    // 4. ÉTAT GLOBAL DU JEU ET RÉFÉRENCES DOM
+    // --------------------------------------------------------------------------
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    const canvasContainer = document.getElementById('canvasContainer');
+
+    const ui = {
+      tierBadge: document.getElementById('tierBadge'),
+      masteryLabel: document.getElementById('masteryLabel'),
+      progressFill: document.getElementById('progressFill'),
+      starsCount: document.getElementById('starsCount'),
+      streakCount: document.getElementById('streakCount'),
+      timerDisplay: document.getElementById('timerDisplay'),
+      missionTitle: document.getElementById('missionTitle'),
+      missionSub: document.getElementById('missionSub'),
+      targetDisplay: document.getElementById('targetDisplay'),
+      feedbackBox: document.getElementById('feedbackBox'),
+      feedbackIcon: document.getElementById('feedbackIcon'),
+      feedbackText: document.getElementById('feedbackText'),
+      btnRun: document.getElementById('btnRun'),
+      btnHint: document.getElementById('btnHint'),
+      btnReset: document.getElementById('btnReset'),
+      btnSkip: document.getElementById('btnSkip'),
+      btnMute: document.getElementById('btnMute')
+    };
+
+    const state = {
+      currentChallenge: null,
+      starsEarned: 0,
+      usedHintThisChallenge: false,
+      attemptsThisChallenge: 0,
+      challengeCompleted: false,
+
+      // Chronomètre actif (ne tourne qu'en phase de réflexion, pas pendant l'animation)
+      activeThinkingSeconds: 0,
+
+      // Mode du jeu : 'EDITING' | 'ANIMATING' | 'RESULT_SUCCESS' | 'RESULT_RETRY'
+      mode: 'EDITING',
+
+      tokens: [],
+      numCount: 0,
+
+      openSlot: 0,
+      closeSlot: 1,
+
+      openVisualX: 0,
+      closeVisualX: 0,
+      bubbleLeft: 0,
+      bubbleRight: 0,
+
+      draggingHandle: null,
+      dragPointerId: null,
+      dragCurrentX: 0,
+
+      showHintHighlight: false,
+
+      evalSteps: [],
+      finalComputedValue: 0,
+      currentStepIdx: 0,
+      stepTimer: 0,
+      stepPhase: 'HIGHLIGHT',
+      activeMergeInfo: null,
+
+      confetti: [],
+      lastTimestamp: 0
+    };
+
+    // --------------------------------------------------------------------------
+    // 5. CHARGEMENT D'UN NOUVEAU DÉFI GÉNÉRÉ & MISE À JOUR UI
+    // --------------------------------------------------------------------------
+    function updateDDAHeaderUI() {
+      const tierCfg = TIER_CONFIGS[dda.currentTier];
+      ui.tierBadge.textContent = tierCfg.badge;
+      ui.masteryLabel.textContent = `Maîtrise : ${dda.masteryScore}%`;
+      ui.progressFill.style.width = `${dda.masteryScore}%`;
+      ui.starsCount.textContent = state.starsEarned;
+      ui.streakCount.textContent = dda.streak;
+    }
+
+    function loadNextGeneratedChallenge() {
+      const challenge = generateProceduralChallenge(dda.currentTier, dda.lastSignature);
+      dda.lastSignature = challenge.signature;
+      state.currentChallenge = challenge;
+
+      state.mode = 'EDITING';
+      state.challengeCompleted = false;
+      state.usedHintThisChallenge = false;
+      state.attemptsThisChallenge = 0;
+      state.activeThinkingSeconds = 0;
+      state.showHintHighlight = false;
+      state.draggingHandle = null;
+      state.dragPointerId = null;
+      state.confetti = [];
+      state.evalSteps = [];
+      state.activeMergeInfo = null;
+
+      let numCounter = 0;
+      state.tokens = challenge.tokens.map((val, i) => {
+        const isNum = typeof val === 'number';
+        return {
+          id: i,
+          uid: i,
+          type: isNum ? 'num' : 'op',
+          numIndex: isNum ? numCounter++ : -1,
+          value: val,
+          x: 0,
+          y: 0,
+          targetX: 0,
+          targetY: 0,
+          scale: 1,
+          alpha: 1,
+          inBubble: false
+        };
+      });
+
+      state.numCount = numCounter;
+      state.openSlot = challenge.defaultOpen;
+      state.closeSlot = challenge.defaultClose;
+
+      const tierCfg = TIER_CONFIGS[dda.currentTier];
+      updateDDAHeaderUI();
+      ui.timerDisplay.textContent = '0s';
+      ui.missionTitle.textContent = tierCfg.title;
+      ui.missionSub.textContent = tierCfg.subtitle;
+      ui.targetDisplay.textContent = challenge.target;
+
+      ui.btnRun.disabled = false;
+      ui.btnRun.classList.remove('btn-next-level');
+      ui.btnRun.innerHTML = '▶ Lancer le calcul !';
+      ui.btnHint.disabled = false;
+      ui.btnReset.disabled = false;
+      ui.btnSkip.disabled = false;
+
+      setFeedback(
+        'info',
+        '🫧',
+        'Glisse les poignées violettes ( et ) autour de l’opération prioritaire, puis appuie sur « Lancer le calcul ! ».'
+      );
+
+      computeLayout(true);
+    }
+
+    function setFeedback(type, icon, message) {
+      ui.feedbackBox.className = `feedback-box ${type}`;
+      ui.feedbackIcon.textContent = icon;
+      ui.feedbackText.textContent = message;
+    }
+
+    function computeLayout(instant = false) {
+      const rect = canvasContainer.getBoundingClientRect();
+      const width = rect.width || 800;
+      const height = rect.height || 340;
+      const centerY = height * 0.52;
+
+      const count = state.tokens.length;
+      if (count === 0) return;
+
+      const maxSpan = Math.min(width * 0.78, count * 92);
+      const stepX = count > 1 ? maxSpan / (count - 1) : 0;
+      const startX = (width - maxSpan) / 2;
+
+      state.tokens.forEach((tok, idx) => {
+        tok.targetX = startX + idx * stepX;
+        tok.targetY = centerY;
+        if (instant) {
+          tok.x = tok.targetX;
+          tok.y = tok.targetY;
+        }
+      });
+
+      if (state.mode === 'EDITING' || state.mode === 'RESULT_RETRY') {
+        const openTokenIdx = state.tokens.findIndex(t => t.type === 'num' && t.numIndex === state.openSlot);
+        const closeTokenIdx = state.tokens.findIndex(t => t.type === 'num' && t.numIndex === state.closeSlot);
+
+        state.tokens.forEach((tok, idx) => {
+          tok.inBubble = (idx >= openTokenIdx && idx <= closeTokenIdx);
+        });
+
+        const tokenRadius = getTokenRadius(width);
+        const targetLeft = state.tokens[openTokenIdx].targetX - tokenRadius - 22;
+        const targetRight = state.tokens[closeTokenIdx].targetX + tokenRadius + 22;
+
+        if (instant) {
+          state.openVisualX = targetLeft;
+          state.closeVisualX = targetRight;
+          state.bubbleLeft = targetLeft;
+          state.bubbleRight = targetRight;
+        }
+      }
+    }
+
+    function getTokenRadius(canvasWidth) {
+      return Math.max(24, Math.min(36, canvasWidth * 0.042));
+    }
+
+    // --------------------------------------------------------------------------
+    // 6. ANIMATION D'ÉVALUATION PAS-À-PAS
+    // --------------------------------------------------------------------------
+    function startEvaluationAnimation() {
+      if (state.mode === 'ANIMATING') return;
+
+      state.attemptsThisChallenge++;
+      const plan = simulateExpression(state.currentChallenge.tokens, state.openSlot, state.closeSlot);
+
+      state.evalSteps = plan.steps;
+      state.finalComputedValue = plan.value;
+      state.currentStepIdx = 0;
+      state.stepTimer = 0;
+      state.stepPhase = 'HIGHLIGHT';
+      state.mode = 'ANIMATING';
+      state.showHintHighlight = false;
+
+      state.tokens.forEach((t, idx) => {
+        t.uid = idx;
+      });
+
+      ui.btnRun.disabled = true;
+      ui.btnHint.disabled = true;
+      ui.btnReset.disabled = true;
+      ui.btnSkip.disabled = true;
+
+      prepareCurrentStep();
+    }
+
+    function prepareCurrentStep() {
+      const step = state.evalSteps[state.currentStepIdx];
+      if (!step) {
+        finishEvaluationAnimation();
+        return;
+      }
+
+      state.stepPhase = 'HIGHLIGHT';
+      state.stepTimer = 0;
+
+      const leftTok = state.tokens.find(t => t.uid === step.leftUid);
+      const opTok = state.tokens.find(t => t.uid === step.opUid);
+      const rightTok = state.tokens.find(t => t.uid === step.rightUid);
+
+      state.activeMergeInfo = {
+        step,
+        leftTok,
+        opTok,
+        rightTok,
+        centerX: opTok ? opTok.x : 0,
+        centerY: opTok ? opTok.y : 0
+      };
+
+      setFeedback('info', step.isInsideParen ? '🫧' : '⚡', step.explanation);
+    }
+
+    function finishEvaluationAnimation() {
+      const challenge = state.currentChallenge;
+      const obtained = state.finalComputedValue;
+
+      if (obtained === challenge.target) {
+        // VICTOIRE DU DÉFI !
+        state.mode = 'RESULT_SUCCESS';
+        state.challengeCompleted = true;
+        spawnConfetti();
+
+        const ddaOutcome = dda.recordSuccess(
+          state.activeThinkingSeconds,
+          state.attemptsThisChallenge,
+          state.usedHintThisChallenge
+        );
+
+        state.starsEarned += ddaOutcome.starsEarned;
+        updateDDAHeaderUI();
+
+        let progressionNote = '';
+        if (ddaOutcome.tierChanged > 0) {
+          sfx.playTierUp();
+          progressionNote = ` 🚀 Bravo, tu passes au ${TIER_CONFIGS[dda.currentTier].badge} !`;
+        } else {
+          sfx.playWin();
+        }
+
+        setFeedback(
+          'success',
+          '🎉',
+          `${ddaOutcome.speedBadge} Le calcul donne bien ${obtained} (+${ddaOutcome.starsEarned} ⭐).${progressionNote}`
+        );
+
+        ui.btnRun.disabled = false;
+        ui.btnRun.classList.add('btn-next-level');
+        ui.btnRun.innerHTML = 'Calcul suivant ➔';
+        ui.btnReset.disabled = false;
+        ui.btnSkip.disabled = false;
+      } else {
+        // RÉSULTAT DIFFÉRENT DE L'OBJECTIF
+        state.mode = 'RESULT_RETRY';
+        sfx.playTryAgain();
+
+        if (state.attemptsThisChallenge >= 2) {
+          dda.recordRepeatedStruggle();
+          updateDDAHeaderUI();
+        }
+
+        const diffMsg = obtained < challenge.target
+          ? `Ton calcul donne ${obtained}, c'est plus petit que ${challenge.target}. Déplace les parenthèses pour entourer une autre opération !`
+          : `Ton calcul donne ${obtained}, mais l'objectif est ${challenge.target}. Essaie de protéger une autre opération dans la bulle !`;
+
+        setFeedback('warning', '🤔', diffMsg);
+        restoreTokensForRetry();
+      }
+    }
+
+    function restoreTokensForRetry() {
+      const challenge = state.currentChallenge;
+      let numCounter = 0;
+      state.tokens = challenge.tokens.map((val, i) => {
+        const isNum = typeof val === 'number';
+        return {
+          id: i,
+          uid: i,
+          type: isNum ? 'num' : 'op',
+          numIndex: isNum ? numCounter++ : -1,
+          value: val,
+          x: 0,
+          y: 0,
+          targetX: 0,
+          targetY: 0,
+          scale: 1,
+          alpha: 1,
+          inBubble: false
+        };
+      });
+      state.activeMergeInfo = null;
+      computeLayout(true);
+
+      ui.btnRun.disabled = false;
+      ui.btnHint.disabled = false;
+      ui.btnReset.disabled = false;
+      ui.btnSkip.disabled = false;
+    }
+
+    // --------------------------------------------------------------------------
+    // 7. INTERACTIONS TACTILES & SOURIS (POINTER EVENTS + AIMANTATION)
+    // --------------------------------------------------------------------------
+    function getHandlePositions() {
+      const rect = canvasContainer.getBoundingClientRect();
+      const height = rect.height || 340;
+      const centerY = height * 0.52;
+      return {
+        openX: state.openVisualX,
+        closeX: state.closeVisualX,
+        y: centerY,
+        hitRadius: 44
+      };
+    }
+
+    canvas.addEventListener('pointerdown', (e) => {
+      if (state.mode !== 'EDITING' && state.mode !== 'RESULT_RETRY') return;
+
+      const rect = canvas.getBoundingClientRect();
+      const px = e.clientX - rect.left;
+      const py = e.clientY - rect.top;
+
+      const handles = getHandlePositions();
+      const distOpen = Math.hypot(px - handles.openX, py - handles.y);
+      const distClose = Math.hypot(px - handles.closeX, py - handles.y);
+
+      if (distOpen <= handles.hitRadius && distOpen <= distClose) {
+        state.draggingHandle = 'OPEN';
+        state.dragPointerId = e.pointerId;
+        state.dragCurrentX = px;
+        canvas.setPointerCapture(e.pointerId);
+        sfx.ensureContext();
+      } else if (distClose <= handles.hitRadius) {
+        state.draggingHandle = 'CLOSE';
+        state.dragPointerId = e.pointerId;
+        state.dragCurrentX = px;
+        canvas.setPointerCapture(e.pointerId);
+        sfx.ensureContext();
+      } else {
+        const tokenRadius = getTokenRadius(rect.width);
+        const clickedNum = state.tokens.find(
+          t => t.type === 'num' && Math.hypot(px - t.x, py - t.y) <= tokenRadius + 10
+        );
+        if (clickedNum) {
+          const idx = clickedNum.numIndex;
+          if (idx < state.closeSlot && Math.abs(idx - state.openSlot) <= Math.abs(idx - state.closeSlot)) {
+            if (state.openSlot !== idx) {
+              state.openSlot = idx;
+              sfx.playSnap();
+              computeLayout(false);
+            }
+          } else if (idx > state.openSlot) {
+            if (state.closeSlot !== idx) {
+              state.closeSlot = idx;
+              sfx.playSnap();
+              computeLayout(false);
+            }
+          }
+        }
+      }
+    });
+
+    canvas.addEventListener('pointermove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const px = e.clientX - rect.left;
+      const py = e.clientY - rect.top;
+
+      if (!state.draggingHandle) {
+        if (state.mode === 'EDITING' || state.mode === 'RESULT_RETRY') {
+          const handles = getHandlePositions();
+          const nearHandle =
+            Math.hypot(px - handles.openX, py - handles.y) <= handles.hitRadius ||
+            Math.hypot(px - handles.closeX, py - handles.y) <= handles.hitRadius;
+          canvas.style.cursor = nearHandle ? 'grab' : 'default';
+        } else {
+          canvas.style.cursor = 'default';
+        }
+        return;
+      }
+
+      if (e.pointerId !== state.dragPointerId) return;
+      canvas.style.cursor = 'grabbing';
+      state.dragCurrentX = px;
+
+      const tokenRadius = getTokenRadius(rect.width);
+      const numTokens = state.tokens.filter(t => t.type === 'num');
+
+      if (state.draggingHandle === 'OPEN') {
+        let bestSlot = state.openSlot;
+        let minDist = Infinity;
+
+        for (let i = 0; i < state.closeSlot; i++) {
+          const anchorX = numTokens[i].targetX - tokenRadius - 22;
+          const d = Math.abs(px - anchorX);
+          if (d < minDist) {
+            minDist = d;
+            bestSlot = i;
+          }
+        }
+
+        if (bestSlot !== state.openSlot) {
+          state.openSlot = bestSlot;
+          sfx.playSnap();
+          computeLayout(false);
+        }
+      } else if (state.draggingHandle === 'CLOSE') {
+        let bestSlot = state.closeSlot;
+        let minDist = Infinity;
+
+        for (let i = state.openSlot + 1; i < state.numCount; i++) {
+          const anchorX = numTokens[i].targetX + tokenRadius + 22;
+          const d = Math.abs(px - anchorX);
+          if (d < minDist) {
+            minDist = d;
+            bestSlot = i;
+          }
+        }
+
+        if (bestSlot !== state.closeSlot) {
+          state.closeSlot = bestSlot;
+          sfx.playSnap();
+          computeLayout(false);
+        }
+      }
+    });
+
+    function releaseDrag(e) {
+      if (state.draggingHandle && e.pointerId === state.dragPointerId) {
+        state.draggingHandle = null;
+        state.dragPointerId = null;
+        canvas.style.cursor = 'default';
+        computeLayout(false);
+      }
+    }
+
+    canvas.addEventListener('pointerup', releaseDrag);
+    canvas.addEventListener('pointercancel', releaseDrag);
+
+    // --------------------------------------------------------------------------
+    // 8. GESTION DES BOUTONS D'INTERFACE
+    // --------------------------------------------------------------------------
+    ui.btnRun.addEventListener('click', () => {
+      sfx.ensureContext();
+      if (state.challengeCompleted) {
+        loadNextGeneratedChallenge();
+        return;
+      }
+
+      if (state.mode === 'RESULT_RETRY') {
+        state.mode = 'EDITING';
+      }
+      startEvaluationAnimation();
+    });
+
+    ui.btnHint.addEventListener('click', () => {
+      if (state.mode === 'ANIMATING' || state.challengeCompleted) return;
+      sfx.ensureContext();
+      sfx.playSnap();
+      state.usedHintThisChallenge = true;
+      state.showHintHighlight = true;
+      setFeedback('info', '💡', state.currentChallenge.hintText);
+    });
+
+    ui.btnReset.addEventListener('click', () => {
+      if (state.mode === 'ANIMATING') return;
+      sfx.ensureContext();
+      sfx.playSnap();
+      state.openSlot = state.currentChallenge.defaultOpen;
+      state.closeSlot = state.currentChallenge.defaultClose;
+      if (state.challengeCompleted) {
+        state.challengeCompleted = false;
+        ui.btnRun.classList.remove('btn-next-level');
+        ui.btnRun.innerHTML = '▶ Lancer le calcul !';
+      }
+      state.mode = 'EDITING';
+      restoreTokensForRetry();
+      setFeedback('info', '🫧', 'Les parenthèses ont été replacées au départ.');
+    });
+
+    ui.btnSkip.addEventListener('click', () => {
+      if (state.mode === 'ANIMATING') return;
+      sfx.ensureContext();
+      sfx.playSnap();
+      loadNextGeneratedChallenge();
+    });
+
+    ui.btnMute.addEventListener('click', () => {
+      sfx.muted = !sfx.muted;
+      ui.btnMute.textContent = sfx.muted ? '🔇' : '🔊';
+    });
+
+    // --------------------------------------------------------------------------
+    // 9. CONFETTIS FESTIFS SUR CANVAS
+    // --------------------------------------------------------------------------
+    function spawnConfetti() {
+      const rect = canvasContainer.getBoundingClientRect();
+      const colors = ['#8B5CF6', '#10B981', '#F59E0B', '#3B82F6', '#EC4899'];
+      state.confetti = [];
+      for (let i = 0; i < 65; i++) {
+        state.confetti.push({
+          x: rect.width * 0.5 + (Math.random() - 0.5) * 160,
+          y: rect.height * 0.45,
+          vx: (Math.random() - 0.5) * 9,
+          vy: -Math.random() * 8 - 3,
+          size: Math.random() * 7 + 5,
+          color: colors[i % colors.length],
+          rot: Math.random() * Math.PI * 2,
+          vRot: (Math.random() - 0.5) * 0.2
+        });
+      }
+    }
+
+    // --------------------------------------------------------------------------
+    // 10. BOUCLE DE MISE À JOUR PHYSIQUE ET RENDU CANVAS (60 FPS)
+    // --------------------------------------------------------------------------
+    function resizeCanvas() {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const rect = canvasContainer.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) return;
+
+      canvas.width = Math.floor(rect.width * dpr);
+      canvas.height = Math.floor(rect.height * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      computeLayout(true);
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+
+    function update(dt) {
+      const rect = canvasContainer.getBoundingClientRect();
+      const width = rect.width || 800;
+      const tokenRadius = getTokenRadius(width);
+
+      // Mesure discrète du temps de réflexion actif (uniquement pendant que l'enfant réfléchit)
+      if ((state.mode === 'EDITING' || state.mode === 'RESULT_RETRY') && !state.challengeCompleted) {
+        state.activeThinkingSeconds += dt;
+        ui.timerDisplay.textContent = `${Math.floor(state.activeThinkingSeconds)}s`;
+      }
+
+      // Animation douce (ressort) des positions des jetons
+      state.tokens.forEach((tok) => {
+        tok.x += (tok.targetX - tok.x) * Math.min(1, dt * 12);
+        tok.y += (tok.targetY - tok.y) * Math.min(1, dt * 12);
+      });
+
+      // Mise à jour des poignées et de la bulle élastique en mode édition
+      if (state.mode === 'EDITING' || state.mode === 'RESULT_RETRY') {
+        const openToken = state.tokens.find(t => t.type === 'num' && t.numIndex === state.openSlot);
+        const closeToken = state.tokens.find(t => t.type === 'num' && t.numIndex === state.closeSlot);
+
+        if (openToken && closeToken) {
+          const snapLeft = openToken.targetX - tokenRadius - 22;
+          const snapRight = closeToken.targetX + tokenRadius + 22;
+
+          const desiredOpenX = state.draggingHandle === 'OPEN'
+            ? snapLeft * 0.65 + state.dragCurrentX * 0.35
+            : snapLeft;
+
+          const desiredCloseX = state.draggingHandle === 'CLOSE'
+            ? snapRight * 0.65 + state.dragCurrentX * 0.35
+            : snapRight;
+
+          state.openVisualX += (desiredOpenX - state.openVisualX) * Math.min(1, dt * 18);
+          state.closeVisualX += (desiredCloseX - state.closeVisualX) * Math.min(1, dt * 18);
+
+          state.bubbleLeft = state.openVisualX;
+          state.bubbleRight = state.closeVisualX;
+        }
+      }
+
+      // Animation de l'évaluation pas-à-pas
+      if (state.mode === 'ANIMATING' && state.activeMergeInfo) {
+        state.stepTimer += dt;
+        const info = state.activeMergeInfo;
+
+        if (state.stepPhase === 'HIGHLIGHT') {
+          const pulse = 1 + Math.sin(state.stepTimer * 10) * 0.08;
+          if (info.leftTok) info.leftTok.scale = pulse;
+          if (info.opTok) info.opTok.scale = pulse;
+          if (info.rightTok) info.rightTok.scale = pulse;
+
+          if (state.stepTimer >= 0.85) {
+            state.stepPhase = 'MERGE';
+            state.stepTimer = 0;
+            sfx.playMerge();
+          }
+        } else if (state.stepPhase === 'MERGE') {
+          const t = Math.min(1, state.stepTimer / 0.55);
+          const ease = t * t * (3 - 2 * t);
+
+          if (info.leftTok) {
+            info.leftTok.targetX = info.centerX;
+            info.leftTok.alpha = 1 - ease;
+            info.leftTok.scale = 1 - ease * 0.4;
+          }
+          if (info.opTok) {
+            info.opTok.alpha = 1 - ease;
+            info.opTok.scale = 1 - ease * 0.5;
+          }
+          if (info.rightTok) {
+            info.rightTok.targetX = info.centerX;
+            info.rightTok.alpha = 1 - ease;
+            info.rightTok.scale = 1 - ease * 0.4;
+          }
+
+          if (t >= 1) {
+            const idx = state.tokens.findIndex(tok => tok.uid === info.step.leftUid);
+            if (idx !== -1) {
+              const mergedToken = {
+                id: info.step.newUid,
+                uid: info.step.newUid,
+                type: 'num',
+                numIndex: -1,
+                value: info.step.resultValue,
+                x: info.centerX,
+                y: info.centerY,
+                targetX: info.centerX,
+                targetY: info.centerY,
+                scale: 1.35,
+                alpha: 1,
+                inBubble: info.step.isInsideParen
+              };
+              state.tokens.splice(idx, 3, mergedToken);
+            }
+
+            recenterRemainingTokens();
+
+            state.stepPhase = 'SETTLE';
+            state.stepTimer = 0;
+          }
+        } else if (state.stepPhase === 'SETTLE') {
+          state.tokens.forEach(tok => {
+            tok.scale += (1 - tok.scale) * Math.min(1, dt * 12);
+          });
+
+          if (state.stepTimer >= 0.65) {
+            state.currentStepIdx++;
+            prepareCurrentStep();
+          }
+        }
+      }
+
+      // Mise à jour des confettis
+      state.confetti.forEach((c) => {
+        c.x += c.vx;
+        c.y += c.vy;
+        c.vy += 0.28;
+        c.rot += c.vRot;
+      });
+    }
+
+    function recenterRemainingTokens() {
+      const rect = canvasContainer.getBoundingClientRect();
+      const width = rect.width || 800;
+      const height = rect.height || 340;
+      const centerY = height * 0.52;
+      const count = state.tokens.length;
+
+      const maxSpan = Math.min(width * 0.72, count * 105);
+      const stepX = count > 1 ? maxSpan / (count - 1) : 0;
+      const startX = (width - maxSpan) / 2;
+
+      state.tokens.forEach((tok, idx) => {
+        tok.targetX = startX + idx * stepX;
+        tok.targetY = centerY;
+      });
+
+      const parenTokens = state.tokens.filter(t => t.inBubble);
+      if (parenTokens.length > 1) {
+        const r = getTokenRadius(width);
+        state.bubbleLeft = parenTokens[0].targetX - r - 20;
+        state.bubbleRight = parenTokens[parenTokens.length - 1].targetX + r + 20;
+      }
+    }
+
+    function draw() {
+      const rect = canvasContainer.getBoundingClientRect();
+      const width = rect.width || 800;
+      const height = rect.height || 340;
+      const centerY = height * 0.52;
+      const tokenRadius = getTokenRadius(width);
+
+      ctx.clearRect(0, 0, width, height);
+
+      if (state.mode === 'EDITING' || state.mode === 'RESULT_RETRY') {
+        drawMagneticSlots(width, centerY, tokenRadius);
+      }
+
+      if (state.showHintHighlight && (state.mode === 'EDITING' || state.mode === 'RESULT_RETRY')) {
+        drawHintZone(width, centerY, tokenRadius);
+      }
+
+      const parenTokens = state.tokens.filter(t => t.inBubble);
+      const shouldDrawBubble =
+        (state.mode === 'EDITING' || state.mode === 'RESULT_RETRY') ||
+        (state.mode === 'ANIMATING' && parenTokens.length > 1);
+
+      if (shouldDrawBubble) {
+        drawPriorityBubble(width, centerY, tokenRadius);
+      }
+
+      if (state.tokens.length > 1) {
+        const first = state.tokens[0];
+        const last = state.tokens[state.tokens.length - 1];
+        ctx.save();
+        ctx.strokeStyle = '#E2E8F0';
+        ctx.lineWidth = 6;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(first.x, first.y);
+        ctx.lineTo(last.x, last.y);
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      state.tokens.forEach((tok) => {
+        drawToken(tok, tokenRadius);
+      });
+
+      if (state.mode === 'EDITING' || state.mode === 'RESULT_RETRY') {
+        drawBracketHandles(centerY, tokenRadius);
+      }
+
+      state.confetti.forEach((c) => {
+        ctx.save();
+        ctx.translate(c.x, c.y);
+        ctx.rotate(c.rot);
+        ctx.fillStyle = c.color;
+        ctx.fillRect(-c.size / 2, -c.size / 2, c.size, c.size * 0.65);
+        ctx.restore();
+      });
+    }
+
+    function drawMagneticSlots(width, centerY, tokenRadius) {
+      const numTokens = state.tokens.filter(t => t.type === 'num');
+      ctx.save();
+      numTokens.forEach((nt, idx) => {
+        if (idx < state.closeSlot) {
+          const ax = nt.targetX - tokenRadius - 22;
+          ctx.fillStyle = idx === state.openSlot ? 'rgba(139, 92, 246, 0.35)' : 'rgba(148, 163, 184, 0.28)';
+          ctx.beginPath();
+          ctx.arc(ax, centerY, 5, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        if (idx > state.openSlot) {
+          const ax = nt.targetX + tokenRadius + 22;
+          ctx.fillStyle = idx === state.closeSlot ? 'rgba(139, 92, 246, 0.35)' : 'rgba(148, 163, 184, 0.28)';
+          ctx.beginPath();
+          ctx.arc(ax, centerY, 5, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      });
+      ctx.restore();
+    }
+
+    function drawHintZone(width, centerY, tokenRadius) {
+      const challenge = state.currentChallenge;
+      const numTokens = state.tokens.filter(t => t.type === 'num');
+      const startTok = numTokens[challenge.hintOpen];
+      const endTok = numTokens[challenge.hintClose];
+      if (!startTok || !endTok) return;
+
+      const left = startTok.targetX - tokenRadius - 14;
+      const right = endTok.targetX + tokenRadius + 14;
+      const boxH = tokenRadius * 2 + 30;
+
+      ctx.save();
+      ctx.strokeStyle = '#F59E0B';
+      ctx.lineWidth = 3;
+      ctx.setLineDash([8, 6]);
+      ctx.fillStyle = 'rgba(254, 243, 199, 0.55)';
+      ctx.beginPath();
+      ctx.roundRect(left, centerY - boxH / 2, right - left, boxH, 24);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = '#B45309';
+      ctx.font = '800 13px system-ui, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('💡 Zone conseillée', (left + right) / 2, centerY + boxH / 2 + 20);
+      ctx.restore();
+    }
+
+    function drawPriorityBubble(width, centerY, tokenRadius) {
+      const left = state.bubbleLeft;
+      const right = state.bubbleRight;
+      const bubbleW = Math.max(40, right - left);
+      const bubbleH = tokenRadius * 2 + 44;
+      const top = centerY - bubbleH / 2;
+
+      ctx.save();
+      // Ombre douce de la bulle
+      ctx.shadowColor = 'rgba(139, 92, 246, 0.22)';
+      ctx.shadowBlur = 18;
+      ctx.shadowOffsetY = 6;
+
+      // Fond translucide violet
+      const grad = ctx.createLinearGradient(left, top, right, top + bubbleH);
+      grad.addColorStop(0, 'rgba(139, 92, 246, 0.16)');
+      grad.addColorStop(1, 'rgba(99, 102, 241, 0.16)');
+      ctx.fillStyle = grad;
+
+      ctx.strokeStyle = '#8B5CF6';
+      ctx.lineWidth = 3.5;
+
+      ctx.beginPath();
+      ctx.roundRect(left, top, bubbleW, bubbleH, 28);
+      ctx.fill();
+      ctx.shadowColor = 'transparent';
+      ctx.stroke();
+
+      // Badge supérieur "⚡ EN PREMIER !"
+      const badgeW = 118;
+      const badgeH = 24;
+      const badgeX = left + bubbleW / 2 - badgeW / 2;
+      const badgeY = top - badgeH / 2 - 2;
+
+      ctx.fillStyle = '#7C3AED';
+      ctx.beginPath();
+      ctx.roundRect(badgeX, badgeY, badgeW, badgeH, 999);
+      ctx.fill();
+
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = '800 11.5px system-ui, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('⚡ EN PREMIER !', left + bubbleW / 2, badgeY + badgeH / 2 + 0.5);
+
+      ctx.restore();
+    }
+
+    function drawToken(tok, baseRadius) {
+      ctx.save();
+      ctx.globalAlpha = tok.alpha;
+      ctx.translate(tok.x, tok.y);
+      ctx.scale(tok.scale, tok.scale);
+
+      const isHighlighting =
+        state.mode === 'ANIMATING' &&
+        state.activeMergeInfo &&
+        (tok.uid === state.activeMergeInfo.step.leftUid ||
+         tok.uid === state.activeMergeInfo.step.opUid ||
+         tok.uid === state.activeMergeInfo.step.rightUid);
+
+      if (tok.type === 'num') {
+        const r = baseRadius;
+        // Ombre portée du jeton nombre
+        ctx.shadowColor = isHighlighting
+          ? 'rgba(245, 158, 11, 0.45)'
+          : 'rgba(15, 23, 42, 0.12)';
+        ctx.shadowBlur = isHighlighting ? 16 : 10;
+        ctx.shadowOffsetY = 4;
+
+        ctx.fillStyle = isHighlighting
+          ? '#FEF3C7'
+          : (tok.inBubble ? '#FFFFFF' : '#F8FAFC');
+
+        ctx.strokeStyle = isHighlighting
+          ? '#F59E0B'
+          : (tok.inBubble ? '#8B5CF6' : '#3B82F6');
+        ctx.lineWidth = isHighlighting ? 4 : 3.5;
+
+        ctx.beginPath();
+        ctx.arc(0, 0, r, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowColor = 'transparent';
+        ctx.stroke();
+
+        // Valeur numérique bien lisible
+        ctx.fillStyle = '#1E293B';
+        ctx.font = `900 ${Math.round(r * 0.85)}px system-ui, sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(String(tok.value), 0, 1);
+      } else {
+        // Jeton Opérateur (+, -, ×)
+        const r = baseRadius * 0.72;
+        ctx.shadowColor = 'rgba(15, 23, 42, 0.1)';
+        ctx.shadowBlur = 8;
+        ctx.shadowOffsetY = 3;
+
+        // Couleur distincte par opération pour faciliter le repérage visuel en CM1
+        let bg = '#EFF6FF';
+        let border = '#93C5FD';
+        let txtColor = '#1D4ED8';
+
+        if (tok.value === '×') {
+          bg = '#FFF7ED';
+          border = '#FDBA74';
+          txtColor = '#C2410C';
+        } else if (tok.value === '-') {
+          bg = '#FDF2F8';
+          border = '#F9A8D4';
+          txtColor = '#BE185D';
+        }
+
+        if (isHighlighting) {
+          bg = '#FEF3C7';
+          border = '#F59E0B';
+        }
+
+        ctx.fillStyle = bg;
+        ctx.strokeStyle = border;
+        ctx.lineWidth = 3;
+
+        ctx.beginPath();
+        ctx.roundRect(-r, -r, r * 2, r * 2, 14);
+        ctx.fill();
+        ctx.shadowColor = 'transparent';
+        ctx.stroke();
+
+        ctx.fillStyle = txtColor;
+        ctx.font = `900 ${Math.round(r * 1.15)}px system-ui, sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(tok.value, 0, 1);
+      }
+
+      ctx.restore();
+    }
+
+    function drawBracketHandles(centerY, tokenRadius) {
+      const handleW = 28;
+      const handleH = tokenRadius * 2 + 24;
+
+      // Poignée gauche '('
+      drawSingleHandle(
+        state.openVisualX,
+        centerY,
+        handleW,
+        handleH,
+        '(',
+        state.draggingHandle === 'OPEN'
+      );
+
+      // Poignée droite ')'
+      drawSingleHandle(
+        state.closeVisualX,
+        centerY,
+        handleW,
+        handleH,
+        ')',
+        state.draggingHandle === 'CLOSE'
+      );
+    }
+
+    function drawSingleHandle(x, y, w, h, symbol, isDragging) {
+      ctx.save();
+      ctx.translate(x, y);
+      if (isDragging) {
+        ctx.scale(1.12, 1.12);
+      }
+
+      ctx.shadowColor = 'rgba(109, 40, 217, 0.35)';
+      ctx.shadowBlur = isDragging ? 16 : 8;
+      ctx.shadowOffsetY = 4;
+
+      const grad = ctx.createLinearGradient(0, -h / 2, 0, h / 2);
+      grad.addColorStop(0, isDragging ? '#7C3AED' : '#8B5CF6');
+      grad.addColorStop(1, isDragging ? '#5B21B6' : '#6D28D9');
+
+      ctx.fillStyle = grad;
+      ctx.strokeStyle = '#FFFFFF';
+      ctx.lineWidth = 2.5;
+
+      ctx.beginPath();
+      ctx.roundRect(-w / 2, -h / 2, w, h, 14);
+      ctx.fill();
+      ctx.shadowColor = 'transparent';
+      ctx.stroke();
+
+      // Symbole parenthèse blanc épais
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = '900 26px system-ui, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(symbol, 0, -1);
+
+      // Petits points de grip tactile en bas de la poignée
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.65)';
+      ctx.beginPath();
+      ctx.arc(-4, h / 2 - 10, 2, 0, Math.PI * 2);
+      ctx.arc(4, h / 2 - 10, 2, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    function gameLoop(timestamp) {
+      if (!state.lastTimestamp) state.lastTimestamp = timestamp;
+      const dt = Math.min(0.05, (timestamp - state.lastTimestamp) / 1000);
+      state.lastTimestamp = timestamp;
+
+      update(dt);
+      draw();
+
+      requestAnimationFrame(gameLoop);
+    }
+
+    // Démarrage au chargement complet de la fenêtre
+    window.onload = function () {
+      resizeCanvas();
+      loadNextGeneratedChallenge();
+      requestAnimationFrame(gameLoop);
+    };
+  </script>
+</body>
+</html>
