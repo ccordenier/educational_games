@@ -3,9 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#7C3AED" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Bulles Maths" />
   <title>Les Bulles Prioritaires — Atelier Maths CM1</title>
   <link rel="manifest" href="./manifest_bulle_priorite.json">
-
   <style>
     /* ==========================================================================
        STYLES GLOBAUX & INTERFACE TACTILE (ADAPTÉE TABLETTE & ORDINATEUR)
@@ -41,8 +44,8 @@
       margin: 0;
       padding: 0;
       width: 100%;
-      height: 100%;
-      overflow: hidden;
+      min-height: 100dvh;
+      overflow-x: hidden;
       background-color: var(--bg-cream);
       background-image:
         radial-gradient(var(--bg-grid) 1.5px, transparent 1.5px),
@@ -53,16 +56,16 @@
       color: var(--text-main);
     }
 
-    /* Conteneur principal pleine hauteur flexible */
+    /* Conteneur principal pleine hauteur dynamique flexible */
     .app-shell {
       display: flex;
       flex-direction: column;
       width: 100%;
-      height: 100%;
+      min-height: 100dvh;
       max-width: 1100px;
       margin: 0 auto;
-      padding: 12px 16px 16px 16px;
-      gap: 10px;
+      padding: 10px 14px 12px 14px;
+      gap: 8px;
     }
 
     /* ==========================================================================
@@ -72,30 +75,31 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      flex-wrap: wrap;
       background: var(--card-bg);
-      padding: 10px 18px;
+      padding: 8px 14px;
       border-radius: var(--radius-lg);
       box-shadow: var(--shadow-soft);
       border: 2px solid #F1F5F9;
-      flex-wrap: wrap;
-      gap: 10px;
+      gap: 8px;
       z-index: 10;
+      flex-shrink: 0;
     }
 
     .brand-group {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
     }
 
     .level-badge {
-      background: linear-gradient(135deg, #6366F1, #8B5CF6);
-      color: white;
+      background: linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%);
+      color: #FFFFFF;
       font-weight: 800;
-      font-size: 1.05rem;
-      padding: 8px 16px;
+      font-size: 0.95rem;
+      padding: 7px 14px;
       border-radius: 999px;
-      box-shadow: 0 4px 10px rgba(139, 92, 246, 0.3);
+      box-shadow: 0 4px 10px rgba(109, 40, 217, 0.22);
       white-space: nowrap;
     }
 
@@ -103,19 +107,17 @@
       display: flex;
       flex-direction: column;
       gap: 4px;
-      min-width: 120px;
+      min-width: 130px;
     }
 
     .progress-label {
       font-size: 0.78rem;
-      font-weight: 700;
+      font-weight: 800;
       color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
     }
 
     .progress-track {
-      width: 140px;
+      width: 100%;
       height: 10px;
       background: #E2E8F0;
       border-radius: 999px;
@@ -125,79 +127,68 @@
     .progress-fill {
       height: 100%;
       width: 25%;
-      background: linear-gradient(90deg, #10B981, #34D399);
+      background: linear-gradient(90deg, #8B5CF6, #10B981);
       border-radius: 999px;
-      transition: width 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transition: width 0.4s ease;
     }
 
     .stats-group {
       display: flex;
       align-items: center;
       gap: 8px;
-      flex-wrap: wrap;
     }
 
     .stat-pill {
-      display: flex;
+      display: inline-flex;
       align-items: center;
-      gap: 6px;
-      font-weight: 800;
-      font-size: 0.98rem;
-      padding: 6px 13px;
+      gap: 5px;
+      background: #F8FAFC;
+      border: 2px solid #E2E8F0;
+      padding: 5px 11px;
       border-radius: 999px;
-      white-space: nowrap;
+      font-weight: 800;
+      font-size: 0.92rem;
+      color: var(--text-main);
     }
 
     .stars-counter {
-      background: #FEF3C7;
-      border: 2px solid #FDE68A;
+      background: #FFFBEB;
+      border-color: #FDE68A;
       color: #B45309;
     }
 
     .streak-counter {
-      background: #FFEDD5;
-      border: 2px solid #FED7AA;
-      color: #C2410C;
-    }
-
-    .timer-pill {
-      background: #F1F5F9;
-      border: 2px solid #E2E8F0;
-      color: #475569;
-      font-variant-numeric: tabular-nums;
+      background: #FFF1F2;
+      border-color: #FECDD3;
+      color: #BE123C;
     }
 
     .tool-buttons {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
+      flex-wrap: wrap;
     }
 
     .btn-tool {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
       background: #F8FAFC;
       border: 2px solid #E2E8F0;
       color: var(--text-main);
-      font-weight: 700;
-      font-size: 0.95rem;
-      padding: 9px 14px;
-      border-radius: var(--radius-md);
+      font-weight: 800;
+      font-size: 0.9rem;
+      padding: 8px 12px;
+      border-radius: 14px;
       cursor: pointer;
-      transition: transform 0.12s ease, background 0.15s ease, border-color 0.15s ease;
-      box-shadow: 0 3px 0 #CBD5E1;
+      transition: transform 0.1s ease, background-color 0.15s ease;
     }
 
     .btn-tool:hover:not(:disabled) {
       background: #F1F5F9;
-      border-color: #CBD5E1;
+      transform: translateY(-1px);
     }
 
     .btn-tool:active:not(:disabled) {
-      transform: translateY(2px);
-      box-shadow: 0 1px 0 #CBD5E1;
+      transform: translateY(1px);
     }
 
     .btn-tool:disabled {
@@ -208,12 +199,7 @@
     .btn-hint {
       background: #FFFBEB;
       border-color: #FCD34D;
-      color: #B45309;
-      box-shadow: 0 3px 0 #F59E0B;
-    }
-
-    .btn-hint:hover:not(:disabled) {
-      background: #FEF3C7;
+      color: #92400E;
     }
 
     /* ==========================================================================
@@ -223,40 +209,42 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      flex-wrap: wrap;
       background: var(--card-bg);
-      padding: 12px 22px;
+      padding: 10px 18px;
       border-radius: var(--radius-lg);
       box-shadow: var(--shadow-soft);
       border: 2px solid #E0E7FF;
-      gap: 14px;
-      flex-wrap: wrap;
+      gap: 10px;
+      flex-shrink: 0;
     }
 
     .mission-text {
       display: flex;
       flex-direction: column;
       gap: 2px;
+      flex: 1 1 260px;
     }
 
     .mission-title {
-      font-size: 1.05rem;
-      font-weight: 800;
-      color: var(--text-main);
+      font-size: 1.08rem;
+      font-weight: 900;
+      color: #1E293B;
     }
 
     .mission-sub {
-      font-size: 0.92rem;
-      color: var(--text-muted);
+      font-size: 0.9rem;
       font-weight: 600;
+      color: var(--text-muted);
     }
 
     .target-pill {
-      display: flex;
+      display: inline-flex;
       align-items: center;
-      gap: 12px;
-      background: linear-gradient(135deg, #EFF6FF, #DBEAFE);
-      border: 3px solid #60A5FA;
-      padding: 8px 22px;
+      gap: 10px;
+      background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);
+      border: 3px solid #3B82F6;
+      padding: 6px 18px;
       border-radius: 999px;
       box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
     }
@@ -266,16 +254,14 @@
       font-weight: 800;
       color: #1D4ED8;
       text-transform: uppercase;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.03em;
     }
 
     .target-number {
-      font-size: 2rem;
+      font-size: 1.75rem;
       font-weight: 900;
       color: #1E3A8A;
       line-height: 1;
-      min-width: 42px;
-      text-align: center;
     }
 
     /* ==========================================================================
@@ -283,21 +269,25 @@
        ========================================================================== */
     .canvas-stage {
       position: relative;
-      flex: 1;
+      flex: 1 1 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       width: 100%;
-      min-height: 250px;
+      min-height: 220px;
       background: var(--card-bg);
       border-radius: var(--radius-lg);
       box-shadow: var(--shadow-soft);
       border: 3px solid #E2E8F0;
       overflow: hidden;
-      touch-action: none; /* Indispensable pour le glisser-déposer fluide sur tablette */
+      touch-action: none; /* Indispensable pour le glisser-déposer fluide sur tablette et mobile */
     }
 
     canvas#gameCanvas {
       display: block;
       width: 100%;
       height: 100%;
+      max-height: 55dvh;
       touch-action: none;
     }
 
@@ -305,21 +295,24 @@
        ZONE BASSE : MESSAGE PÉDAGOGIQUE & BOUTON D'ACTION PRINCIPAL
        ========================================================================== */
     .bottom-controls {
+      position: sticky;
+      bottom: 0;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 14px;
+      flex-wrap: wrap;
+      gap: 10px;
       background: var(--card-bg);
-      padding: 12px 20px;
+      padding: 10px 16px;
       border-radius: var(--radius-lg);
       box-shadow: var(--shadow-soft);
       border: 2px solid #F1F5F9;
-      flex-wrap: wrap;
+      flex-shrink: 0;
+      z-index: 15;
     }
 
     .feedback-box {
-      flex: 1;
-      min-width: 240px;
+      flex: 1 1 320px;
       display: flex;
       align-items: center;
       gap: 12px;
@@ -327,13 +320,13 @@
       border-radius: var(--radius-md);
       background: #F8FAFC;
       border: 2px solid #E2E8F0;
-      transition: all 0.25s ease;
+      transition: background-color 0.25s ease, border-color 0.25s ease;
     }
 
     .feedback-box.info {
-      background: #F0F9FF;
-      border-color: #BAE6FD;
-      color: #0369A1;
+      background: #F5F3FF;
+      border-color: #DDD6FE;
+      color: #4C1D95;
     }
 
     .feedback-box.success {
@@ -343,18 +336,19 @@
     }
 
     .feedback-box.warning {
-      background: #FFF1F2;
-      border-color: #FECDD3;
-      color: #9F1239;
+      background: #FFFBEB;
+      border-color: #FCD34D;
+      color: #92400E;
     }
 
     .feedback-icon {
-      font-size: 1.6rem;
+      font-size: 1.45rem;
+      line-height: 1;
       flex-shrink: 0;
     }
 
     .feedback-content {
-      font-size: 0.98rem;
+      font-size: 0.96rem;
       font-weight: 700;
       line-height: 1.35;
     }
@@ -362,7 +356,8 @@
     .action-buttons {
       display: flex;
       align-items: center;
-      gap: 10px;
+      justify-content: flex-end;
+      flex-shrink: 0;
     }
 
     .btn-primary-action {
@@ -375,70 +370,102 @@
       border: none;
       font-size: 1.15rem;
       font-weight: 900;
-      padding: 15px 28px;
+      padding: 14px 26px;
       border-radius: 18px;
       cursor: pointer;
-      box-shadow: 0 6px 0 #047857, 0 10px 20px rgba(16, 185, 129, 0.3);
-      transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.15s ease;
-      white-space: nowrap;
+      box-shadow: 0 6px 0 #047857, 0 10px 20px rgba(5, 150, 105, 0.25);
+      transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.15s ease;
     }
 
     .btn-primary-action:hover:not(:disabled) {
-      filter: brightness(1.05);
+      filter: brightness(1.04);
+      transform: translateY(-1px);
     }
 
     .btn-primary-action:active:not(:disabled) {
-      transform: translateY(4px);
-      box-shadow: 0 2px 0 #047857, 0 4px 10px rgba(16, 185, 129, 0.25);
+      transform: translateY(3px);
+      box-shadow: 0 3px 0 #047857, 0 5px 10px rgba(5, 150, 105, 0.2);
     }
 
     .btn-primary-action:disabled {
-      background: #94A3B8;
-      box-shadow: 0 5px 0 #64748B;
+      opacity: 0.55;
       cursor: not-allowed;
+      transform: none;
     }
 
-    .btn-next-level {
-      background: linear-gradient(180deg, #3B82F6 0%, #2563EB 100%);
-      box-shadow: 0 6px 0 #1D4ED8, 0 10px 20px rgba(59, 130, 246, 0.32);
+    .btn-primary-action.btn-next-level {
+      background: linear-gradient(180deg, #8B5CF6 0%, #6D28D9 100%);
+      box-shadow: 0 6px 0 #4C1D95, 0 10px 20px rgba(109, 40, 217, 0.28);
     }
 
-    .btn-next-level:active:not(:disabled) {
-      box-shadow: 0 2px 0 #1D4ED8;
+    .btn-primary-action.btn-next-level:active:not(:disabled) {
+      box-shadow: 0 3px 0 #4C1D95, 0 5px 10px rgba(109, 40, 217, 0.22);
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    @keyframes popUp {
-      from { transform: scale(0.82); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
-    }
-
-    /* Ajustements responsives pour petits écrans / tablettes portrait */
+    /* Ajustements responsives pour smartphones et petits écrans */
     @media (max-width: 760px) {
       .app-shell {
-        padding: 8px 10px 10px 10px;
-        gap: 8px;
+        padding: 6px 8px 8px 8px;
+        gap: 6px;
       }
       .top-bar {
-        padding: 8px 12px;
+        padding: 6px 10px;
+        gap: 6px;
+      }
+      .level-badge {
+        font-size: 0.85rem;
+        padding: 6px 11px;
+      }
+      .stat-pill {
+        font-size: 0.85rem;
+        padding: 4px 9px;
+      }
+      .btn-tool {
+        padding: 7px 10px;
+        font-size: 0.85rem;
       }
       .progress-wrapper {
         display: none;
       }
       .mission-banner {
-        padding: 10px 14px;
+        padding: 8px 12px;
+        gap: 6px;
+      }
+      .mission-title {
+        font-size: 0.95rem;
+      }
+      .mission-sub {
+        font-size: 0.82rem;
+      }
+      .target-pill {
+        padding: 5px 14px;
+        gap: 8px;
       }
       .target-number {
-        font-size: 1.65rem;
+        font-size: 1.45rem;
+      }
+      .canvas-stage {
+        min-height: 190px;
+      }
+      canvas#gameCanvas {
+        max-height: 45dvh;
+      }
+      .bottom-controls {
+        padding: 8px 10px;
+        gap: 8px;
+      }
+      .feedback-box {
+        min-width: 100%;
+        padding: 8px 12px;
+        gap: 8px;
+      }
+      .feedback-content {
+        font-size: 0.88rem;
       }
       .btn-primary-action {
         width: 100%;
-        padding: 13px 20px;
-        font-size: 1.05rem;
+        padding: 12px 18px;
+        font-size: 1rem;
       }
       .action-buttons {
         width: 100%;
@@ -1183,7 +1210,9 @@
     }
 
     function getTokenRadius(canvasWidth) {
-      return Math.max(24, Math.min(36, canvasWidth * 0.042));
+      const minR = canvasWidth < 480 ? 22 : 24;
+      const maxR = canvasWidth < 480 ? 30 : 36;
+      return Math.max(minR, Math.min(maxR, canvasWidth * (canvasWidth < 480 ? 0.055 : 0.042)));
     }
 
     // --------------------------------------------------------------------------
@@ -1338,7 +1367,7 @@
         openX: state.openVisualX,
         closeX: state.closeVisualX,
         y: centerY,
-        hitRadius: 44
+        hitRadius: rect.width < 480 ? 52 : 44
       };
     }
 
@@ -1547,8 +1576,8 @@
       const rect = canvasContainer.getBoundingClientRect();
       if (rect.width === 0 || rect.height === 0) return;
 
-      canvas.width = Math.floor(rect.width * dpr);
-      canvas.height = Math.floor(rect.height * dpr);
+      canvas.width = Math.max(300, Math.floor(rect.width * dpr));
+      canvas.height = Math.max(200, Math.floor(rect.height * dpr));
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       computeLayout(true);
     }
@@ -1949,70 +1978,58 @@
     }
 
     function drawBracketHandles(centerY, tokenRadius) {
-      const handleW = 28;
-      const handleH = tokenRadius * 2 + 24;
+      const rect = canvasContainer.getBoundingClientRect();
+      const isCompact = (rect.width || 800) < 480;
+      const handleW = isCompact ? 32 : 28;
+      const handleH = tokenRadius * 2 + (isCompact ? 30 : 24);
 
-      // Poignée gauche '('
-      drawSingleHandle(
-        state.openVisualX,
-        centerY,
-        handleW,
-        handleH,
-        '(',
-        state.draggingHandle === 'OPEN'
-      );
+      const handles = [
+        { type: 'OPEN', x: state.openVisualX, symbol: '(', active: state.draggingHandle === 'OPEN' },
+        { type: 'CLOSE', x: state.closeVisualX, symbol: ')', active: state.draggingHandle === 'CLOSE' }
+      ];
 
-      // Poignée droite ')'
-      drawSingleHandle(
-        state.closeVisualX,
-        centerY,
-        handleW,
-        handleH,
-        ')',
-        state.draggingHandle === 'CLOSE'
-      );
-    }
+      handles.forEach((h) => {
+        ctx.save();
+        const scale = h.active ? 1.12 : 1.0;
+        ctx.translate(h.x, centerY);
+        ctx.scale(scale, scale);
 
-    function drawSingleHandle(x, y, w, h, symbol, isDragging) {
-      ctx.save();
-      ctx.translate(x, y);
-      if (isDragging) {
-        ctx.scale(1.12, 1.12);
-      }
+        // Ombre portée de la poignée tactile
+        ctx.shadowColor = h.active ? 'rgba(109, 40, 217, 0.4)' : 'rgba(109, 40, 217, 0.22)';
+        ctx.shadowBlur = h.active ? 14 : 8;
+        ctx.shadowOffsetY = 3;
 
-      ctx.shadowColor = 'rgba(109, 40, 217, 0.35)';
-      ctx.shadowBlur = isDragging ? 16 : 8;
-      ctx.shadowOffsetY = 4;
+        // Pilule violette interactive
+        const grad = ctx.createLinearGradient(0, -handleH / 2, 0, handleH / 2);
+        grad.addColorStop(0, h.active ? '#7C3AED' : '#8B5CF6');
+        grad.addColorStop(1, h.active ? '#5B21B6' : '#6D28D9');
+        ctx.fillStyle = grad;
 
-      const grad = ctx.createLinearGradient(0, -h / 2, 0, h / 2);
-      grad.addColorStop(0, isDragging ? '#7C3AED' : '#8B5CF6');
-      grad.addColorStop(1, isDragging ? '#5B21B6' : '#6D28D9');
+        ctx.strokeStyle = '#FFFFFF';
+        ctx.lineWidth = 2.5;
 
-      ctx.fillStyle = grad;
-      ctx.strokeStyle = '#FFFFFF';
-      ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.roundRect(-handleW / 2, -handleH / 2, handleW, handleH, 14);
+        ctx.fill();
+        ctx.shadowColor = 'transparent';
+        ctx.stroke();
 
-      ctx.beginPath();
-      ctx.roundRect(-w / 2, -h / 2, w, h, 14);
-      ctx.fill();
-      ctx.shadowColor = 'transparent';
-      ctx.stroke();
+        // Symbole '(' ou ')'
+        ctx.fillStyle = '#FFFFFF';
+        ctx.font = `900 ${isCompact ? 24 : 26}px system-ui, sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(h.symbol, 0, -1);
 
-      // Symbole parenthèse blanc épais
-      ctx.fillStyle = '#FFFFFF';
-      ctx.font = '900 26px system-ui, sans-serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(symbol, 0, -1);
+        // Petits points d'accroche tactile en haut et en bas
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.65)';
+        ctx.beginPath();
+        ctx.arc(0, -handleH / 2 + 9, 2.2, 0, Math.PI * 2);
+        ctx.arc(0, handleH / 2 - 9, 2.2, 0, Math.PI * 2);
+        ctx.fill();
 
-      // Petits points de grip tactile en bas de la poignée
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.65)';
-      ctx.beginPath();
-      ctx.arc(-4, h / 2 - 10, 2, 0, Math.PI * 2);
-      ctx.arc(4, h / 2 - 10, 2, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.restore();
+        ctx.restore();
+      });
     }
 
     function gameLoop(timestamp) {
@@ -2026,10 +2043,10 @@
       requestAnimationFrame(gameLoop);
     }
 
-    // Démarrage au chargement complet de la fenêtre
+    // Démarrage propre au chargement complet de la fenêtre
     window.onload = function () {
-      resizeCanvas();
       loadNextGeneratedChallenge();
+      resizeCanvas();
       requestAnimationFrame(gameLoop);
     };
   </script>
