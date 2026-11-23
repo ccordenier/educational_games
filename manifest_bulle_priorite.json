@@ -4,7 +4,7 @@
   "description": "Jeu éducatif tactile pour apprendre à placer les parenthèses dans un calcul mathématique (niveau CM1).",
   "start_url": "./bulle_priorite.html",
   "scope": "./",
-  "display": "standalone",
+  "display": "any",
   "orientation": "portrait",
   "background_color": "#f5f3ff",
   "theme_color": "#7c3aed",
